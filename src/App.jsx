@@ -2,7 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import classnames from "classnames"
 import GoogleAnalytics from "react-ga"
-import Layout from "../components/Layout"
+import Layout from "jaid-web/components/Layout"
 import css from "./style.css"
 
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
