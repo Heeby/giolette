@@ -1,12 +1,12 @@
 const fs = require("fs")
 const packageData = JSON.parse(fs.readFileSync("package.json", "utf8"))
 
-const title = "jaid-web"
+const title = "Giolette"
 const version = packageData.version
 const embedTitle = title
 const authorName = packageData.author.name
 const authorUrl = "https://github.com/jaid"
-const siteUrl = "http://jaid-web.j4id.com"
+const siteUrl = "http://github.com/jaid/giolette"
 const description = packageData.description
 const thumbnail = siteUrl + "/coast-228x228.png"
 const thumbnailSize = 228
@@ -15,7 +15,7 @@ const locale = "en_US"
 const twitterHandle = "itsjaid"
 const facebookAuthorProfile = "hms257"
 const googleAnalyticsTrackingId = "UA-51563406-4"
-const googleAdsenseClient = "ca-pub-XXXXXXXXXXXXXXXX"
+const googleAdsenseClient = null
 
 module.exports = {
     id: packageData.name,

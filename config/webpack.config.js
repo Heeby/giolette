@@ -159,26 +159,4 @@ if (isDebug && useHMR) {
     config.plugins.push(new webpack.NoEmitOnErrorsPlugin())
 }
 
-// Adding OfflinePlugin as last one because it wishes so
-// https://github.com/NekR/offline-plugin
-config.plugins.push(new OfflinePlugin({
-        publicPath: "/",
-        caches: {
-            main: [":externals:", ":rest:"],
-        },
-        externals: [
-            "/",
-            "mstile-150x150.png",
-            "favicon-16x16.png",
-            "favicon-32x32.png",
-            "coast-228x228.png"
-        ],
-        ServiceWorker: {
-            navigateFallbackURL: "/",
-            cacheName: appDescription.id
-        },
-        AppCache: false
-    })
-)
-
 module.exports = config

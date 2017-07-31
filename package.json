@@ -20,7 +20,9 @@
   "dependencies": {
     "jaid-web": "*"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "electron": "^1.6.11"
+  },
   "scripts": {
     "build": "gulp build --prod",
     "build-dev": "gulp build",
