@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - '8'
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+cache:
+  directories:
+    - "node_modules"
+script:
+  - gulp build --prod
+deploy:
+  provider: surge
+  project: ./dist/
+  domain: jaid-web.j4id.com
+  skip_cleanup: true

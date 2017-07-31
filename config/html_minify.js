@@ -1,0 +1,1 @@
+../node_modules/jaid-web/config/html_minify.js

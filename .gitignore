@@ -1,0 +1,16 @@
+# IDE data
+/.idea/
+
+# Allowed IDE data
+!/.idea/encodings.xml
+
+# NodeJS/npm
+/node_modules/
+
+# Yarn
+/yarn.lock
+/yarn-error.log
+
+# Build folder
+/dist/
+/gen/

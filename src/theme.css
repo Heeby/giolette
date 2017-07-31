@@ -1,0 +1,13 @@
+:root {
+  --jaid-background-lightness: 12%;
+  --jaid-section-lightness: 100%;
+  --jaid-section-opacity: 0.08;
+  --jaid-section-shadow-opacity: 0.2;
+  --jaid-input-background-lightness: 80%;
+  --jaid-input-shadow-opacity: 0.5;
+  --jaid-primary-hue: 0;
+  --jaid-primary-saturation: 40%;
+  --jaid-primary-lightness: 50%;
+  --jaid-title-text-shadow-opacity: 0;
+  --jaid-header-space-left: 0;
+}
