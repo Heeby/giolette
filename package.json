@@ -1,6 +1,7 @@
 {
   "private": true,
   "license": "MIT",
+  "main": "electron.js",
   "author": {
     "name": "Jaid",
     "url": "https://github.com/jaid",
@@ -10,7 +11,7 @@
   "name": "giolette",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jaid/XXXXXXXXXX"
+    "url": "https://github.com/jaid/giolette"
   },
   "description": "Automated wheel of fortune for Twitch subscribers and donators",
   "engines": {
@@ -18,16 +19,16 @@
     "npm": ">=5"
   },
   "dependencies": {
-    "jaid-web": "*"
+    "jaid-web": "jaid/jaid-web"
   },
   "devDependencies": {
-    "electron": "^1.6.11"
+    "electron": "^1.7.5"
   },
   "scripts": {
     "build": "gulp build --prod",
     "build-dev": "gulp build",
-    "run": "gulp run --prod",
-    "debug": "gulp run --display-error-details",
+    "run": "gulp build --prod && ./node_modules/.bin/electron .",
+    "debug": "gulp build && ./node_modules/.bin/electron .",
     "debug-hardcore": "npm i && gulp clean && gulp run --display-error-details",
     "publish": "npm publish"
   }

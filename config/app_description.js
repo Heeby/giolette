@@ -14,7 +14,7 @@ const language = "en"
 const locale = "en_US"
 const twitterHandle = "itsjaid"
 const facebookAuthorProfile = "hms257"
-const googleAnalyticsTrackingId = "UA-51563406-4"
+const googleAnalyticsTrackingId = null
 const googleAdsenseClient = null
 
 module.exports = {

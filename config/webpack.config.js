@@ -46,9 +46,11 @@ const config = {
         extensions: [".js", ".jsx"]
     },
 
+    target: "electron-renderer",
+
     output: {
         path: path.resolve(__dirname, "../dist/"),
-        publicPath: isDebug ? `http://localhost:${process.env.PORT || 3000}/` : "/",
+        publicPath: './',
         filename: isDebug ? "[name].js?[hash]" : "[name].[hash].js",
         chunkFilename: isDebug ? "[id].js?[chunkhash]" : "[id].[chunkhash].js",
         sourcePrefix: "  "

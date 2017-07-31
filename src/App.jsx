@@ -1,11 +1,10 @@
 import React from "react"
 import PropTypes from "prop-types"
 import classnames from "classnames"
-import GoogleAnalytics from "react-ga"
 import Layout from "jaid-web/components/Layout"
 import css from "./style.css"
 
-import {BrowserRouter as Router, Switch, Route} from "react-router-dom"
+import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom"
 import Index from "./index"
 
 export default class App extends React.Component {
@@ -16,8 +15,6 @@ export default class App extends React.Component {
 
     updatePage = () => {
         console.log(`Set route to ${window.location.pathname}`)
-        GoogleAnalytics.set({page: window.location.pathname})
-        GoogleAnalytics.pageview(window.location.pathname)
         return null
     }
 
@@ -32,7 +29,8 @@ export default class App extends React.Component {
         return (
             <div className={classnames(this.props.className)}>
                 <Router>
-                    <Layout className={css.content}>
+                    <Layout className={css.content} icon="./favicon.ico" creditsBaseText="Jaid made this one for Gio with">
+                        {window.location.pathname.includes('index.html') && <Redirect to="/" />}
                         <Route path="/" component={this.updatePage} />
                         <Switch>
                             <Route exact path="/" component={Index} />

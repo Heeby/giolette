@@ -1,6 +1,7 @@
 import React from "react"
 
 import {Link} from "react-router-dom"
+import ApiStatus from "../../components/ApiStatus"
 
 export default class Index extends React.Component {
 
@@ -9,7 +10,11 @@ export default class Index extends React.Component {
 
     render() {
         return (
-            <Link to="/about">About (404)</Link>
+            <div>
+                Setting up your APIs
+                <hr />
+                <ApiStatus/>
+            </div>
         )
     }
 
