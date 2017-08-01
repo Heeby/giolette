@@ -50,7 +50,7 @@ const config = {
 
     output: {
         path: path.resolve(__dirname, "../dist/"),
-        publicPath: './',
+        publicPath: "./",
         filename: isDebug ? "[name].js?[hash]" : "[name].[hash].js",
         chunkFilename: isDebug ? "[id].js?[chunkhash]" : "[id].[chunkhash].js",
         sourcePrefix: "  "

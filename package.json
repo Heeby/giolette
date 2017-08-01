@@ -19,16 +19,17 @@
     "npm": ">=5"
   },
   "dependencies": {
-    "jaid-web": "jaid/jaid-web"
+    "jaid-web": "github:jaid/jaid-web"
   },
   "devDependencies": {
-    "electron": "^1.7.5"
+    "electron": "^1.7.5",
+    "electron-devtools-installer": "^2.2.0"
   },
   "scripts": {
     "build": "gulp build --prod",
     "build-dev": "gulp build",
-    "run": "gulp build --prod && ./node_modules/.bin/electron .",
-    "debug": "gulp build && ./node_modules/.bin/electron .",
+    "run": "gulp build --prod && ./node_modules/.bin/electron --prod -r babel-register .",
+    "debug": "gulp build && ./node_modules/.bin/electron -r babel-register .",
     "debug-hardcore": "npm i && gulp clean && gulp run --display-error-details",
     "publish": "npm publish"
   }

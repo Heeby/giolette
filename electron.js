@@ -1,29 +1,34 @@
-const electron = require("electron")
-// Module to control application life.
-const app = electron.app
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
+const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod")
 
-const path = require("path")
-const url = require("url")
+import {app, BrowserWindow} from "electron"
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+
+import path from "path"
+import url from "url"
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow() {
+
+    if (isDebug) {
+        installExtension(REACT_DEVELOPER_TOOLS)
+            .then((name) => console.log(`Added Extension:  ${name}`))
+            .catch((err) => console.log('An error occurred: ', err));
+    }
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
-        minWidth: 200,
-        minHeight: 100,
-        icon: path.join(__dirname, 'dist/icon_1080.png'),
+        minWidth: 500,
+        minHeight: 300,
+        icon: path.join(__dirname, "dist/firefox_app_128x128.png"),
         darkTheme: true,
-        center: true,
         autoHideMenuBar: true,
         webPreferences: {
-            devTools: true,
+            devTools: isDebug,
             defaultEncoding: "UTF-8",
             backgroundThrottling: false
         }
@@ -69,6 +74,3 @@ app.on("activate", function () {
         createWindow()
     }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

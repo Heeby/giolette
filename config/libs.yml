@@ -22,3 +22,6 @@
   url: https://github.com/FortAwesome/Font-Awesome
 - name: Webpack
   url: https://github.com/webpack/webpack
+
+- name: Electron
+  url: https://github.com/electron/electron
