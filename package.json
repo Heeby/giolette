@@ -19,6 +19,7 @@
     "npm": ">=5"
   },
   "dependencies": {
+    "config": "^1.26.1",
     "jaid-web": "github:jaid/jaid-web"
   },
   "devDependencies": {

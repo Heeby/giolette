@@ -114,10 +114,7 @@ const config = {
             },
             {
                 test: /\.(png|jpg|jpeg|gif|svg|woff2)$/,
-                loader: "url-loader",
-                options: {
-                    limit: 8192
-                }
+                loader: "url-loader"
             },
             {
                 test: /\.(yml|yaml)$/,

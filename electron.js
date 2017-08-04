@@ -7,6 +7,10 @@ import path from "path"
 import url from "url"
 
 import deepbotApi from "./src/apis/Deepbot"
+import discordApi from "./src/apis/Discord"
+import tipeeeApi from "./src/apis/Tipeee"
+import twitchOauthApi from "./src/apis/TwitchOauth"
+import twitchPublicApi from "./src/apis/TwitchPublic"
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -21,7 +25,11 @@ function createWindow() {
     }
 
     global.apis = {
-        deepbot: deepbotApi
+        deepbot: deepbotApi,
+        discord: discordApi,
+        tipeee: tipeeeApi,
+        twitchOauth: twitchOauthApi,
+        twitchPublic: twitchPublicApi
     }
 
     // Create the browser window.

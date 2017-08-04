@@ -4,12 +4,22 @@
     box-shadow: 2px 2px 10px color(black alpha(30%));
     border-radius: 8px;
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
     padding: 8px;
     margin: 4px;
 }
 
-.name {
+.container .api-status-testing > .icon {
+    filter: brightness(50%) sepia(1) saturate(20) hue-rotate(50deg)
+}
 
+.icon {
+    width: 128px;
+    height: 128px;
+}
+
+.name {
+    align-self: center;
 }

@@ -18,7 +18,7 @@ gulp.task("clean", function () {
 })
 
 gulp.task("copy-public", () => {
-    return gulp.src("public/*")
+    return gulp.src(["public/*", "src/res/**"])
         .pipe(gulpNewer("dist"))
         .pipe(gulp.dest("dist"))
 })

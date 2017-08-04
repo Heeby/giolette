@@ -22,7 +22,7 @@ export default class Index extends React.Component {
     render() {
 
         const apis = Object.keys(this.state.apis).map((i) =>
-            <ApiStatus key={this.state.apis[i].id} name={this.state.apis[i].name} />
+            <ApiStatus key={this.state.apis[i].id} name={this.state.apis[i].name} apiId={this.state.apis[i].id} />
         )
 
         return (
