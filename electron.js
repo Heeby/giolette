@@ -6,6 +6,8 @@ import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-insta
 import path from "path"
 import url from "url"
 
+import deepbotApi from "./src/apis/Deepbot"
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -16,6 +18,10 @@ function createWindow() {
         installExtension(REACT_DEVELOPER_TOOLS)
             .then((name) => console.log(`Added Extension:  ${name}`))
             .catch((err) => console.log('An error occurred: ', err));
+    }
+
+    global.apis = {
+        deepbot: deepbotApi
     }
 
     // Create the browser window.
