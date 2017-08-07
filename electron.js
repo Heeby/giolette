@@ -9,8 +9,8 @@ import url from "url"
 import deepbotApi from "./src/apis/Deepbot"
 import discordApi from "./src/apis/Discord"
 import tipeeeApi from "./src/apis/Tipeee"
-import twitchOauthApi from "./src/apis/TwitchOauth"
-import twitchPublicApi from "./src/apis/TwitchPublic"
+import twitchOauthApi from "./src/apis/TwitchPubSub"
+import twitchPublicApi from "./src/apis/TwitchKraken"
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

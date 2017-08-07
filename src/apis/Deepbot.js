@@ -1,6 +1,6 @@
 export default {
-    name: "Tipeee",
-    id: "tipeee",
+    name: "Deepbot",
+    id: "deepbot",
     status: "pending",
     tooltip: null,
 
