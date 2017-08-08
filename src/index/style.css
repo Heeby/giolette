@@ -4,8 +4,10 @@
     justify-content: center;
 }
 
-.apiTestButton {
+.button {
     margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .apiTooltip {

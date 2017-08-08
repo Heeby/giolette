@@ -1,41 +1,50 @@
+require("babel-register")({
+    only: /my_es6_folder/
+})
+
 const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod")
 
 import {app, BrowserWindow} from "electron"
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+import installExtension, {REACT_DEVELOPER_TOOLS} from "electron-devtools-installer"
 
 import path from "path"
 import url from "url"
+import queryString from "query-string"
 
 import deepbotApi from "./src/apis/Deepbot"
 import discordApi from "./src/apis/Discord"
 import tipeeeApi from "./src/apis/Tipeee"
-import twitchOauthApi from "./src/apis/TwitchPubsub"
-import twitchPublicApi from "./src/apis/TwitchKraken"
+import twitchOauthApi from "./src/apis/TwitchOauth"
+import twitchPublicApi from "./src/apis/TwitchPublic"
+import browserSourceApi from "./src/apis/BrowserSource"
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let authWindow
 
 function createWindow() {
 
     if (isDebug) {
         installExtension(REACT_DEVELOPER_TOOLS)
             .then((name) => console.log(`Added Extension:  ${name}`))
-            .catch((err) => console.log('An error occurred: ', err));
+            .catch((err) => console.log("An error occurred: ", err))
     }
 
+    global.initTwitchAuth = initTwitchAuth
     global.apis = {
         deepbot: deepbotApi,
         discord: discordApi,
         tipeee: tipeeeApi,
         twitchOauth: twitchOauthApi,
-        twitchPublic: twitchPublicApi
+        twitchPublic: twitchPublicApi,
+        browserSource: browserSourceApi
     }
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1200,
-        height: 800,
+        width: 780,
+        height: 660,
         minWidth: 500,
         minHeight: 300,
         icon: path.join(__dirname, "dist/firefox_app_128x128.png"),
@@ -51,12 +60,8 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, "dist/index.html"),
-        protocol: "file:",
-        slashes: true
+        protocol: "file:"
     }))
-
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on("closed", function () {
@@ -65,6 +70,62 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+
+}
+
+const initTwitchAuth = () => {
+    authWindow = new BrowserWindow({
+        parent: mainWindow,
+        width: 480,
+        height: 480,
+        minWidth: 480,
+        minHeight: 480,
+        icon: path.join(__dirname, "dist/firefox_app_128x128.png"),
+        darkTheme: true,
+        autoHideMenuBar: true,
+        nodeIntegration: false,
+        webPreferences: {
+            defaultEncoding: "UTF-8"
+        }
+    })
+
+    authWindow.loadURL(url.format({
+        protocol: "https",
+        host: "api.twitch.tv",
+        pathname: "/kraken/oauth2/authorize",
+        query: {
+            client_id: "19hxab1r53jujqh1nt6utpc046axu9",
+            redirect_uri: "http://localhost",
+            response_type: "token id_token",
+            scope: "openid channel_read channel_subscriptions"
+        }
+    }))
+
+    authWindow.webContents.on("will-navigate", function (event, url) {
+        getTwitchAuth(url)
+    })
+
+    authWindow.webContents.on("did-get-redirect-request", function (event, oldUrl, newUrl) {
+        getTwitchAuth(newUrl)
+    })
+}
+
+function getTwitchAuth(redirectUrl) {
+    const {host, hash} = url.parse(redirectUrl)
+
+    if (host !== "localhost") {
+        return
+    }
+
+    const {access_token, id_token} = queryString.parse(hash)
+
+    if (access_token) {
+        apis.twitchOauth.accessToken = access_token
+        apis.twitchOauth.idToken = id_token
+        console.log(`access_token: ${access_token}`)
+        console.log(`id_token: ${id_token}`)
+        authWindow.destroy()
+    }
 }
 
 // This method will be called when Electron has finished
@@ -78,13 +139,5 @@ app.on("window-all-closed", function () {
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
         app.quit()
-    }
-})
-
-app.on("activate", function () {
-    // On OS X it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) {
-        createWindow()
     }
 })

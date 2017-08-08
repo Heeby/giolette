@@ -31,7 +31,7 @@ gulp.task("favicons", () => {
         .pipe(gulp.dest("dist"))
 })
 
-gulp.task("build", ["copy-public", "favicons"], (callback) => {
+gulp.task("build", ["copy-public", "favicons", "build-browser-source"], (callback) => {
 
     const webpackConfig = require("./config/webpack.config")
 
@@ -45,6 +45,16 @@ gulp.task("build", ["copy-public", "favicons"], (callback) => {
 
     })
 
+})
+
+gulp.task("build-browser-source",(callback) => {
+    const webpackConfig = require("./browser_source/webpack.config")
+    webpack(webpackConfig, function (err, stats) {
+        if (err) {
+            throw new gulpUtil.PluginError("webpack", err)
+        }
+        callback()
+    })
 })
 
 gulp.task("run", ["copy-public", "favicons"], () => {

@@ -5,8 +5,8 @@ const twitchRequest = request.defaults({
     baseUrl: "https://api.twitch.tv/kraken/",
     jar: true,
     headers: {
-        "Client-ID": "19hxab1r53jujqh1nt6utpc046axu9",
-        "Accept": "application/vnd.twitchtv.v5+json"
+        Accept: "application/vnd.twitchtv.v5+json",
+        "Client-ID": "19hxab1r53jujqh1nt6utpc046axu9"
     }
 })
 

@@ -1,5 +1,5 @@
 import React from "react"
-import electron from "electron"
+import electron, {BrowserWindow} from "electron"
 
 import {Link} from "react-router-dom"
 import ReactTooltip from "react-tooltip"
@@ -8,10 +8,10 @@ import Button from "jaid-web/components/Button"
 import Hr from "jaid-web/components/Hr"
 import css from "./style.css"
 
+
 export default class Index extends React.Component {
 
     componentDidMount() {
-        this.testApis()
     }
 
     constructor(props) {
@@ -21,25 +21,29 @@ export default class Index extends React.Component {
         }
     }
 
-    testApis = () => {
-        const apis = Object.values(this.state.apis)
+    testApis = (apis) => {
+        apis = Array.isArray(apis) ? apis : Object.values(this.state.apis)
 
         apis.forEach((api) => {
             api.status = "running"
+            api.tooltip = "Testing..."
             this.forceUpdate(null)
-            api.test().then(
-                (successValue) => {
+            api.test()
+                .then((successValue) => {
                     api.status = "success"
-                    api.tooltip = successValue
+                    api.tooltip = Array.isArray(successValue) ? successValue.join("<hr>") : successValue
                     this.forceUpdate(null)
-                },
-                (reason) => {
+                })
+                .catch((reason) => {
                     api.status = "error"
                     api.tooltip = reason.message
                     this.forceUpdate(null)
-                }
-            )
+                })
         })
+    }
+
+    loginWithTwitch = () => {
+        electron.remote.getGlobal("initTwitchAuth")()
     }
 
     render() {
@@ -50,7 +54,7 @@ export default class Index extends React.Component {
                 <div key={api.id} data-tip data-for={`api-tooltip-${api.id}`}>
                     <ApiStatus status={api.status} name={api.name} apiId={api.id} />
                     {api.tooltip &&
-                    <ReactTooltip data-type={api.status === "success" ? "dark" : "error"} id={`api-tooltip-${api.id}`} html={true} class={css.apiTooltip}>
+                    <ReactTooltip type={api.status === "error" ? "error" : "dark"} id={`api-tooltip-${api.id}`} html={true} class={css.apiTooltip}>
                         {api.tooltip}
                     </ReactTooltip>}
                 </div>
@@ -64,7 +68,10 @@ export default class Index extends React.Component {
                 <div className={css.apiStatusContainer}>
                     {apis}
                 </div>
-                <Button onClick={this.testApis} containerClassName={css.apiTestButton} text="Test APIs" />
+                <Button onClick={this.loginWithTwitch} containerClassName={css.button} text="Login with Twitch" />
+                <br />
+                <Button onClick={() => this.testApis()} containerClassName={css.button} text="Test APIs" />
+                <br />
             </div>
         )
     }
