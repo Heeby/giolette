@@ -15,6 +15,20 @@ const cssLoaderConfig = {
     minimize: !isDebug
 }
 
+const htmlMinifyConfig = {
+    removeAttributeQuotes: true,
+    collapseWhitespace: true,
+    collapseBooleanAttributes: true,
+    decodeEntities: true,
+    minifyCSS: true,
+    minifyJS: true,
+    removeComments: true,
+    removeRedundantAttributes: true,
+    sortAttributes: true,
+    sortClassName: true,
+    useShortDoctype: true
+}
+
 const config = {
 
     context: path.resolve(__dirname, "."),
@@ -28,7 +42,7 @@ const config = {
     },
 
     output: {
-        path: path.resolve(__dirname, "../dist/browser-source"),
+        path: path.resolve(__dirname, "../gen/browser-source"),
         publicPath: "./",
         filename: "[name].js",
         sourcePrefix: "  "
@@ -40,7 +54,7 @@ const config = {
 
     // What information should be printed to the console
     stats: {
-        colors: true,
+        colors: false,
         reasons: isDebug,
         hash: isVerbose,
         version: isVerbose,
@@ -52,12 +66,18 @@ const config = {
     },
 
     plugins: [
+        new webpack.DefinePlugin({
+            "process.env.NODE_ENV": isDebug ? "\"development\"" : "\"production\"",
+            __DEV__: isDebug
+        }),
         new webpack.LoaderOptionsPlugin({
             debug: isDebug,
             minimize: !isDebug
         }),
         new HtmlWebpackPlugin({
-            inlineSource: ".(js|css)$"
+            inlineSource: ".(js|css)$",
+            template: path.resolve(__dirname, "./index.html"),
+            minify: isDebug ? null : htmlMinifyConfig
         }),
         new HtmlWebpackInlineSourcePlugin
     ],
@@ -66,7 +86,10 @@ const config = {
         rules: [
             {
                 test: /\.jsx?$/,
-                exclude: /node_modules\/(?!(jaid-web)\/).*/,
+                include: [
+                    path.resolve(__dirname, "."),
+                    path.resolve(__dirname, "../node_modules/jaid-web")
+                ],
                 use: "babel-loader"
             },
             {
@@ -99,7 +122,7 @@ const config = {
 // Optimizations in prod build
 if (!isDebug) {
     config.plugins = config.plugins.concat([
-         new webpack.optimize.AggressiveMergingPlugin,
+        new webpack.optimize.AggressiveMergingPlugin,
         new webpack.optimize.OccurrenceOrderPlugin,
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: true,

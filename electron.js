@@ -1,7 +1,3 @@
-require("babel-register")({
-    only: /my_es6_folder/
-})
-
 const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod")
 
 import {app, BrowserWindow} from "electron"
@@ -17,6 +13,7 @@ import tipeeeApi from "./src/apis/Tipeee"
 import twitchOauthApi from "./src/apis/TwitchOauth"
 import twitchPublicApi from "./src/apis/TwitchPublic"
 import browserSourceApi from "./src/apis/BrowserSource"
+import websocketApi from "./src/apis/WebSocket"
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -38,7 +35,8 @@ function createWindow() {
         tipeee: tipeeeApi,
         twitchOauth: twitchOauthApi,
         twitchPublic: twitchPublicApi,
-        browserSource: browserSourceApi
+        browserSource: browserSourceApi,
+        websocket: websocketApi
     }
 
     // Create the browser window.

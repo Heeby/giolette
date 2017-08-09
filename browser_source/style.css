@@ -1,0 +1,82 @@
+body {
+    font-family: Ubuntu, sans-serif;
+    text-shadow: 0 0 6px black, 0 0 3px black;
+    color: white;
+    overflow: hidden;
+    font-size: 24px;
+}
+
+.wheel {
+    transition: opacity 1s ease-out
+}
+
+.wheelHeader {
+    position: absolute;
+    width: 390px;
+    top: 350px;
+    left: 450px;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 5px black;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.wheelIcon {
+    width: 140px;
+    height: 140px;
+    padding-bottom: 20px;
+}
+
+.wheelArrow {
+    position: absolute;
+    top: -130px;
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 0 5px black;
+    font-size: 130px;
+}
+
+.prize {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 5px black;
+    background: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border-radius: 20px;
+    text-align: center;
+    transition: opacity 1s
+}
+
+.prizeIcon {
+    width: 150px;
+    height: 150px;
+    padding-bottom: 20px;
+}
+
+.prizeName {
+}
+
+.queue {
+    background-repeat: no-repeat;
+    background-size: 30px;
+    position: absolute;
+    padding-left: 40px;
+    z-index: 20;
+    height: 60px;
+    vertical-align: middle;
+    bottom: 0;
+    left: 10px;
+}
+
+.debugPanel {
+    display: none;
+    position: absolute;
+    z-index: 2;
+}

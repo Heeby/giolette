@@ -1,6 +1,5 @@
 import http from "http"
 import request from "request"
-import fs from "fs"
 
 export default {
     name: "OBS BrowserSource",
@@ -8,6 +7,7 @@ export default {
     status: "pending",
     tooltip: null,
 
+    htmlContent: null,
     httpServer: null,
 
     init() {
@@ -18,10 +18,10 @@ export default {
                 resolve()
             }
 
-            console.log(fs.readdirSync("."))
+            const htmlContent = this.htmlContent
             this.httpServer = http.createServer(function (request, response) {
                 response.writeHead(200, {"Content-Type": "text/html"})
-                response.write(fs.readFile("test.txt", "utf8"))
+                response.write(htmlContent)
                 response.end()
             }).listen(24490, "localhost", null, resolve)
 

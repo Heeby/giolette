@@ -8,6 +8,7 @@ import Button from "jaid-web/components/Button"
 import Hr from "jaid-web/components/Hr"
 import css from "./style.css"
 
+import browserSourceHtml from "raw-loader!./../../gen/browser-source/index.html"
 
 export default class Index extends React.Component {
 
@@ -19,6 +20,7 @@ export default class Index extends React.Component {
         this.state = {
             apis: electron.remote.getGlobal("apis")
         }
+        this.state.apis.browserSource.htmlContent = browserSourceHtml;
     }
 
     testApis = (apis) => {

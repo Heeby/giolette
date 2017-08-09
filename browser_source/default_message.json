@@ -1,0 +1,23 @@
+{
+  "name": "Tsumetai_te",
+  "avatar": "https://pbs.twimg.com/profile_images/883545430793039873/EcywH6MO_400x400.jpg",
+  "points": 500,
+  "prize": {
+    "name": "10000 Punchline-Punkte",
+    "icon": "pp_10000",
+    "hue": 350,
+    "points": 10000
+  },
+  "fake_prizes": [
+    {
+      "name": "Meet and Greet",
+      "icon": "meet_and_greet",
+      "hue": 320,
+      "saturation": 1000,
+      "brightness": 50
+    },
+    {
+      "name": "Hochzeit mit Gio"
+    }
+  ]
+}
