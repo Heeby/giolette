@@ -14,7 +14,6 @@ const d3 = require("d3-ease")
 import defaultMessage from "!raw-loader!./default_message.json"
 import gioletteIcon from "../public/icon_1080.png"
 
-
 export default class App extends React.Component {
 
     componentDidMount() {
@@ -56,6 +55,8 @@ export default class App extends React.Component {
         if (typeof message === "string") {
             message = JSON.parse(message.trim())
         }
+
+        console.log(message);
 
         const truePrizeIndex = lodash.random(40, 80)
 
@@ -200,8 +201,8 @@ class WheelEntry extends React.Component {
         return <div style={{
             left: `${(needleRelation + 2) * 260}px`,
             top: `${(needleDistanceEase) * 10 + 10}px`,
-            boxShadow: (!this.props.isFake && this.props.isRevealed) ? "0 0 5px black, inset 0 0 30px white" : "0 0 5px black",
-            opacity: (this.props.isFake && this.props.isRevealed) ? 0.2 : 1
+            boxShadow: (!this.props.isFake && this.props.isRevealed) ? "0 0 5px black, inset 0 0 10px white" : "0 0 5px black",
+            opacity: (this.props.isFake && this.props.isRevealed) ? 0.3 : 1
         }} className={css.prize}>
             <img className={css.prizeIcon} src={require(`../src/res/images/prizes/${this.props.prize.icon || "generic"}.png`)} style={{
                 filter: `brightness(${this.props.prize.brightness || 90}%) sepia(100%) saturate(${this.props.prize.saturation || 600}%) hue-rotate(${this.props.prize.hue || 170}deg)`,

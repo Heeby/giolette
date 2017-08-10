@@ -1,0 +1,21 @@
+browserSource:
+  port: 24490
+
+deepbot:
+  port: 3337
+  api_key: XXX
+
+discord:
+  server_id: XXX
+  bot_key: XXX
+  test_channel: XXX
+  game: gioSmile
+
+tipeee:
+  api_key: XXX
+  username: XXX
+
+twitchPublic: {}
+
+websocket:
+  port: 24491

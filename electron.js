@@ -3,11 +3,15 @@ const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod"
 import {app, BrowserWindow} from "electron"
 import installExtension, {REACT_DEVELOPER_TOOLS} from "electron-devtools-installer"
 
+import fs from "fs"
 import path from "path"
 import url from "url"
+import mkdirp from "mkdirp"
 import queryString from "query-string"
+import yaml from "js-yaml"
 
 import deepbotApi from "./src/apis/Deepbot"
+import deepbotDebugApi from "./src/apis/DeepbotDebug"
 import discordApi from "./src/apis/Discord"
 import tipeeeApi from "./src/apis/Tipeee"
 import twitchOauthApi from "./src/apis/TwitchOauth"
@@ -22,27 +26,65 @@ let authWindow
 
 function createWindow() {
 
+    mkdirp.sync(path.resolve(app.getPath("userData"), "config"))
+
+    const configFilenames = ["prizes.yml", "config.yml"]
+    configFilenames.forEach((configFilename) => {
+        const outputFile = path.resolve(app.getPath("userData"), `config/${configFilename}`)
+        try {
+            fs.accessSync(outputFile)
+        } catch (error) {
+            console.log(error.message)
+            fs.createReadStream(`config/defaults/${configFilename}`).pipe(fs.createWriteStream(outputFile))
+            global.errorMessage = `I created ${outputFile} for you! Please edit this file and start me again!`
+        }
+    })
+
+    const prizesFile = path.resolve(app.getPath("userData"), "config/prizes.yml")
+    const configFile = path.resolve(app.getPath("userData"), "config/config.yml")
+    const prizes = yaml.safeLoad(fs.readFileSync(prizesFile))
+    const config = yaml.safeLoad(fs.readFileSync(configFile))
+
+    if (!prizes) {
+        global.errorMessage = global.errorMessage || "Could not load prizes.yml"
+    }
+
+    if (!config) {
+        global.errorMessage = global.errorMessage || "Could not load config.yml"
+    }
+
     if (isDebug) {
         installExtension(REACT_DEVELOPER_TOOLS)
             .then((name) => console.log(`Added Extension:  ${name}`))
             .catch((err) => console.log("An error occurred: ", err))
     }
 
+    global.prizes = prizes
     global.initTwitchAuth = initTwitchAuth
     global.apis = {
-        deepbot: deepbotApi,
+        deepbot: isDebug ? deepbotDebugApi : deepbotApi,
         discord: discordApi,
         tipeee: tipeeeApi,
-        twitchOauth: twitchOauthApi,
+        //    twitchOauth: twitchOauthApi,
         twitchPublic: twitchPublicApi,
         browserSource: browserSourceApi,
         websocket: websocketApi
     }
 
+    console.log(global.apis.deepbot)
+
+    let weightSum = 0.0
+    prizes.forEach(prize => weightSum += prize.weight)
+    prizes.forEach(prize => prize.weightNormalized = prize.weight / weightSum)
+
+    Object.keys(global.apis).forEach((api) => {
+        global.apis[api].config = config[api]
+    })
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 780,
-        height: 660,
+        width: 720,
+        height: 720,
         minWidth: 500,
         minHeight: 300,
         icon: path.join(__dirname, "dist/firefox_app_128x128.png"),
@@ -82,6 +124,7 @@ const initTwitchAuth = () => {
         darkTheme: true,
         autoHideMenuBar: true,
         nodeIntegration: false,
+        title: "Login with Twitch",
         webPreferences: {
             defaultEncoding: "UTF-8"
         }

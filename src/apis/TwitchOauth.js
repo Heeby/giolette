@@ -20,6 +20,7 @@ export default {
     id: "twitch_oauth",
     status: "pending",
     tooltip: null,
+    config: null,
 
     // Set in electron.js
     accessToken: null,
@@ -35,6 +36,7 @@ export default {
             if (this.twitchId) {
                 console.log("Skipping setupTwitchIdPromise: twitchId already initialized")
                 resolve()
+                return
             }
             twitchRequest("channel", {
                 headers: {
@@ -44,6 +46,7 @@ export default {
 
                 if (error) {
                     reject(error)
+                    return
                 }
 
                 this.twitchId = body._id

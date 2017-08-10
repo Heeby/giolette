@@ -15,6 +15,7 @@ export default {
     id: "twitch_public",
     status: "pending",
     tooltip: null,
+    config: null,
 
     init() {
 
@@ -29,12 +30,29 @@ export default {
 
                 if (error) {
                     reject(error)
+                    return
                 }
 
                 resolve(`<b>Status:</b> ${response.statusCode} ${response.statusMessage}<br><b>Test URL:</b> ${response.request.uri.href}`)
 
             })
 
+        })
+    },
+
+    getAvatar(name) {
+        return new Promise((resolve, reject) => {
+            twitchRequest(`users?login=${name}`, (error, response, body) => {
+
+                const avatar = (!error && response.statusCode === 200 && body.users[0] && body.users[0].logo)
+                    ? body.users[0].logo
+                    : "https://raw.githubusercontent.com/Jaid/giolette/master/public/icon_1080.png"
+                const displayName = (!error && response.statusCode === 200 && body.users[0] && body.users[0].display_name)
+                    ? body.users[0].display_name
+                    : `"${name}"`
+                resolve({avatar: avatar, displayName: displayName})
+
+            })
         })
     }
 }
