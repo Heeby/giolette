@@ -21,12 +21,15 @@ export default class Index extends React.Component {
         super(props)
         this.state = {
             apis: electron.remote.getGlobal("apis"),
-            customSpinUser: "J4idn"
+            customSpinUser: "J4idn",
+            tipeeEventsReceived: null,
+            apisWorking: false
         }
         this.state.apis.browserSource.htmlContent = browserSourceHtml
     }
 
     testApis = (apis) => {
+        this.setState({apisWorking: true})
         apis = Array.isArray(apis) ? apis : Object.values(this.state.apis)
 
         apis.forEach((api) => {
@@ -42,10 +45,14 @@ export default class Index extends React.Component {
                 .catch((reason) => {
                     api.status = "error"
                     api.tooltip = reason.message
+                    this.setState({apisWorking: false})
                     this.forceUpdate(null)
                 })
         })
+
+
     }
+
 
     loginWithTwitch = () => {
         electron.remote.getGlobal("initTwitchAuth")()
@@ -62,17 +69,32 @@ export default class Index extends React.Component {
         const fakePrizes = []
         lodash.range(5).forEach(() => fakePrizes.push(lodash.sample(prizes)))
 
-        Promise.all([this.state.apis.twitchPublic.getAvatar(user)]).then((data) => {
+        if (selectedPrize.points) {
+            this.state.apis.deepbot.addPoints(user, selectedPrize.points)
+        }
+
+        Promise.all([this.state.apis.twitchPublic.getAvatar(user), this.state.apis.deepbot.getPoints(user)]).then((data) => {
             const spin = {
                 name: data[0].displayName,
                 avatar: data[0].avatar,
-                points: 0,
+                points: data[1],
                 prize: selectedPrize,
                 fake_prizes: fakePrizes
             }
             this.state.apis.websocket.send(spin)
             this.state.apis.discord.log(spin)
         })
+    }
+
+    startTipeee = () => {
+        console.log("Starting")
+        this.state.apis.tipeee.addListener(data => {
+            if (data.event.type === "subscription" || (data.event.type === "donation" && data.event.parameters.amount >= 5)) {
+                this.spin(data.event.parameters.username)
+                this.setState({tipeeEventsReceived: this.state.tipeeeEventsReceived + 1})
+            }
+        })
+        this.setState({tipeeeEventsReceived: 0})
     }
 
     render() {
@@ -110,16 +132,19 @@ export default class Index extends React.Component {
                 </div>
                 <br />
                 <Button onClick={() => this.testApis()} containerClassName={css.button} text="Test APIs" />
+                {this.state.apisWorking && <Button onClick={this.startTipeee} containerClassName={css.button} text="Start Tipeee" />}
+                {Number.isInteger(this.state.tipeeeEventsReceived) &&
+                <span className={css.tipeeeEvents}>Connected to Tipeee (Events received: {this.state.tipeeeEventsReceived})</span>}
                 <br />
-                <div style={{height: "100px"}}/>
+                <div style={{height: "100px"}} />
                 Prizes
                 <Hr />
                 {prizes.map(prize =>
                     <div className={css.prize}>
                         <img className={css.prizeIcon} src={require(`../res/images/prizes/${prize.icon}.png`)} style={{
                             filter: `brightness(${prize.brightness || 90}%) sepia(100%) saturate(${prize.saturation || 600}%) hue-rotate(${prize.hue || 170}deg)`
-                        }}/>
-<span>{prize.name}</span>
+                        }} />
+                        <span>{prize.name}</span>
                         <span>{prize.weight} weight ({lodash.round(prize.weightNormalized * 100, 2)}%)</span>
                     </div>)}
 

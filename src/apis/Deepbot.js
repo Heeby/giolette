@@ -1,4 +1,11 @@
 import WebSocket from "ws"
+import numeral from "numeral"
+import EventEmitter from "eventemitter3"
+
+const eventEmitter = new EventEmitter()
+const onDeepbotMessage = (message) => {
+    eventEmitter.emit("message", message)
+}
 
 export default {
     name: "Deepbot",
@@ -13,15 +20,17 @@ export default {
         return new Promise((resolve, reject) => {
             if (this.socket) {
                 resolve()
+                return
             }
 
             const socket = new WebSocket(`ws://localhost:${this.config.port}`)
             socket.on("open", () => {
                 console.log("Deepbot WebSocket started")
                 this.socket = socket
-                ws.on("message", (message) => {
+                socket.on("message", onDeepbotMessage)
+                eventEmitter.on("message", (message) => {
                     const registerResult = JSON.parse(message).msg
-                    if (msg === "success") {
+                    if (registerResult === "success") {
                         resolve(`Port: ${this.config.port}`)
                     } else {
                         reject(`Deepbot response: ${message}`)
@@ -41,8 +50,31 @@ export default {
     },
 
     getPoints(name) {
+        const socket = this.socket
         return this.init().then(() => new Promise((resolve, reject) => {
+            const messageListener = (message) => {
+                const result = JSON.parse(message)
+                if (!result || !result.function || result.function !== "get_points" || !result.param || result.param.toLowerCase() !== name.toLowerCase()) {
+                    console.log(`Wrong message from Deepbot: ${JSON.stringify(result)}`)
+                    return
+                }
+                console.log(`${name}: ${numeral(result.msg.replace(",", ".")).value()}`)
+                eventEmitter.removeListener("message", messageListener)
+                resolve(numeral(result.msg.replace(",", ".")).value())
+            }
+            eventEmitter.on("message", messageListener)
+            socket.send(`api|get_points|${name}`)
+            setTimeout(() => {
+                resolve(0)
+            }, 8000)
+        }))
+    },
 
+    addPoints(name, points) {
+        return this.init().then(() => new Promise((resolve, reject) => {
+            console.log(`${name}: +${points}`)
+            this.socket.send(`api|add_points|${name}|${points}`)
+            resolve()
         }))
     }
 }

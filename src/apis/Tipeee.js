@@ -11,7 +11,6 @@ export default {
     init() {
         return new Promise((resolve, reject) => {
             if (this.socket) {
-                console.log("Skipping Tipeee.init(): socket already initialized")
                 resolve()
                 return
             }
@@ -19,13 +18,19 @@ export default {
             const socket = io("https://sso.tipeeestream.com:4242")
             socket.on("connect", () => {
                 console.log("Connected to Tipeee socket")
-                socket.emit("join-room", {room: this.config.api_key, username: this.config.username})
+                this.socket = socket;
                 resolve("Seems to work")
             })
+            socket.emit("join-room", {room: this.config.api_key, username: this.config.username})
         })
     },
 
     test() {
         return this.init()
+    },
+
+    async addListener(listener) {
+        await this.init()
+        this.socket.on("new-event", listener)
     }
 }

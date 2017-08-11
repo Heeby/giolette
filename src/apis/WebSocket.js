@@ -13,7 +13,6 @@ export default {
         return new Promise((resolve, reject) => {
 
             if (this.websocketServer) {
-                console.log("Skipping WebSocket.init(): websocketServer already initialized")
                 resolve()
                 return
             }
@@ -53,7 +52,6 @@ export default {
 
     async send(spin) {
         await this.init()
-        console.log("SEND " + spin)
         this.websocketServer.broadcast(JSON.stringify(spin))
     }
 }

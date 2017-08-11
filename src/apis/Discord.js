@@ -15,7 +15,6 @@ export default {
         return new Promise((resolve, reject) => {
 
             if (this.discordBot) {
-                console.log("Skipping Discord.init: discordBot already initialized")
                 resolve()
                 return
             }

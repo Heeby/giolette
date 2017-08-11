@@ -11,7 +11,6 @@ import queryString from "query-string"
 import yaml from "js-yaml"
 
 import deepbotApi from "./src/apis/Deepbot"
-import deepbotDebugApi from "./src/apis/DeepbotDebug"
 import discordApi from "./src/apis/Discord"
 import tipeeeApi from "./src/apis/Tipeee"
 import twitchOauthApi from "./src/apis/TwitchOauth"
@@ -62,7 +61,7 @@ function createWindow() {
     global.prizes = prizes
     global.initTwitchAuth = initTwitchAuth
     global.apis = {
-        deepbot: isDebug ? deepbotDebugApi : deepbotApi,
+        deepbot: deepbotApi,
         discord: discordApi,
         tipeee: tipeeeApi,
         //    twitchOauth: twitchOauthApi,
@@ -70,8 +69,6 @@ function createWindow() {
         browserSource: browserSourceApi,
         websocket: websocketApi
     }
-
-    console.log(global.apis.deepbot)
 
     let weightSum = 0.0
     prizes.forEach(prize => weightSum += prize.weight)

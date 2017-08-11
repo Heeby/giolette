@@ -83,7 +83,7 @@ export default class App extends React.Component {
     render() {
         return <div>
             {!lodash.isEmpty(this.state.queue) &&
-            <div className={css.queue} style={{backgroundImage: `url(${gioletteIcon})`}}>{lodash.map(this.state.queue, "name").join(", ")}</div>}
+            <div className={css.queue} style={{backgroundImage: `url(${gioletteIcon})`}}>{lodash.map(this.state.queue, "name").slice(0,3).join(", ")}{(this.state.queue.length > 3) && ` (+${this.state.queue.length-3})`}</div>}
             <div id="debug-panel" className={css.debugPanel}>
                 <textarea defaultValue={defaultMessage} id="message-input" rows="8" cols="50" />
                 <br />
