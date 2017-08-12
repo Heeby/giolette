@@ -1,0 +1,23 @@
+browserSource:
+  port: 24490
+
+deepbot:
+  port: 3337
+  api_key: 1234
+
+discord:
+  server_id: "202479804262514688"
+  bot_key: MzQ0MzA1MDQxMjIzNzEyNzcw.DGrSkQ.X8bnwvTW2vYam8yifLihNi2JkEo
+  test_channel: giolette_pp
+  game: gioSmile
+
+tipeee:
+  api_key: 81f018553385a35a7251c4ec3f78f972268651b8
+  username: J4idn
+
+twitchOauth: {}
+
+twitchPublic: {}
+
+websocket:
+  port: 24491

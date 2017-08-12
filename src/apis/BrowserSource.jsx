@@ -43,11 +43,8 @@ export default {
         })
     },
 
-    async test() {
-        if (this.httpServer) {
-            await this.httpServer.close()
-        }
+    test() {
         this.httpServer = null
-        return this.init().then(()=>this.testHttpServer(this))
+        return this.init().then(() => this.testHttpServer(this))
     }
 }

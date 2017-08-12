@@ -2,6 +2,8 @@ import gulp from "gulp"
 import gulpUtil from "gulp-util"
 import gulpNewer from "gulp-newer"
 import gulpClean from "gulp-clean"
+import gulpBabel from "gulp-babel"
+import gulpWebpack from "webpack-stream"
 
 import webpack from "webpack"
 import favicons from "gulp-favicons"
@@ -10,7 +12,7 @@ import webpackDevServer from "webpack-dev-server"
 import appDescription from "./config/app_description"
 import faviconsConfig from "./config/favicons"
 
-const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod")
+const isDebug = process.env.NODE_ENV !== "production"
 
 gulp.task("clean", function () {
     return gulp.src(["gen/", "dist/"], {read: false})
@@ -31,30 +33,22 @@ gulp.task("favicons", () => {
         .pipe(gulp.dest("dist"))
 })
 
-gulp.task("build", ["copy-public", "favicons", "build-browser-source"], (callback) => {
-
-    const webpackConfig = require("./config/webpack.config")
-
-    webpack(webpackConfig, function (err, stats) {
-
-        if (err) {
-            throw new gulpUtil.PluginError("webpack", err)
-        }
-
-        callback()
-
-    })
-
+gulp.task("babel", () => {
+    return gulp.src(["./*.jsx", "./src/apis/*.jsx"], {base: "./"})
+        .pipe(gulpBabel())
+        .pipe(gulp.dest("."))
 })
 
-gulp.task("build-browser-source",(callback) => {
-    const webpackConfig = require("./browser_source/webpack.config")
-    webpack(webpackConfig, function (err, stats) {
-        if (err) {
-            throw new gulpUtil.PluginError("webpack", err)
-        }
-        callback()
-    })
+gulp.task("build", ["babel", "copy-public", "favicons", "build-browser-source"], (callback) => {
+    return gulp.src("./src/main.jsx")
+        .pipe(gulpWebpack(require("./config/webpack.config")))
+        .pipe(gulp.dest("./dist"))
+})
+
+gulp.task("build-browser-source", () => {
+    return gulp.src("./browser_source/main.jsx")
+        .pipe(gulpWebpack(require("./browser_source/webpack.config")))
+        .pipe(gulp.dest("./gen/browser-source"))
 })
 
 gulp.task("run", ["copy-public", "favicons"], () => {

@@ -1,9 +1,9 @@
-const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod")
+const isDebug = process.env.NODE_ENV !== "production"
 
 import {app, BrowserWindow} from "electron"
 import installExtension, {REACT_DEVELOPER_TOOLS} from "electron-devtools-installer"
 
-import fs from "fs"
+import fs from "fs-extra"
 import path from "path"
 import url from "url"
 import mkdirp from "mkdirp"
@@ -23,24 +23,31 @@ import websocketApi from "./src/apis/WebSocket"
 let mainWindow
 let authWindow
 
-function createWindow() {
+const configDir = path.resolve(".", "giolette-config")
+console.log(`Working in: ${configDir}`)
 
-    mkdirp.sync(path.resolve(app.getPath("userData"), "config"))
+function createDefaultFile(filename) {
+    return new Promise((resolve, reject) => {
 
-    const configFilenames = ["prizes.yml", "config.yml"]
-    configFilenames.forEach((configFilename) => {
-        const outputFile = path.resolve(app.getPath("userData"), `config/${configFilename}`)
+        const outputFile = path.resolve(configDir, filename)
+
         try {
             fs.accessSync(outputFile)
+            console.log(`File ${filename} found!`)
+            resolve()
         } catch (error) {
-            console.log(error.message)
-            fs.createReadStream(`config/defaults/${configFilename}`).pipe(fs.createWriteStream(outputFile))
+            console.log(`Creating default file ${filename}`)
+            fs.copy(`config/defaults/${filename}`, outputFile, {}, resolve)
             global.errorMessage = `I created ${outputFile} for you! Please edit this file and start me again!`
         }
-    })
 
-    const prizesFile = path.resolve(app.getPath("userData"), "config/prizes.yml")
-    const configFile = path.resolve(app.getPath("userData"), "config/config.yml")
+    })
+}
+
+function createWindow() {
+
+    const prizesFile = path.resolve(configDir, "prizes.yml")
+    const configFile = path.resolve(configDir, "config.yml")
     const prizes = yaml.safeLoad(fs.readFileSync(prizesFile))
     const config = yaml.safeLoad(fs.readFileSync(configFile))
 
@@ -169,10 +176,15 @@ function getTwitchAuth(redirectUrl) {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow)
+app.on("ready", () => {
+    fs.mkdirsSync(configDir)
+    createDefaultFile("config.yml")
+        .then(() => createDefaultFile("prizes.yml"))
+        .then(() => createWindow())
+})
 
 // Quit when all windows are closed.
-app.on("window-all-closed", function () {
+app.on("window-all-closed", () => {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {

@@ -4,7 +4,7 @@ import {BundleAnalyzerPlugin} from "webpack-bundle-analyzer"
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import HtmlWebpackInlineSourcePlugin from "html-webpack-inline-source-plugin"
 
-const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod")
+const isDebug = process.env.NODE_ENV !== "production"
 const isVerbose = process.argv.includes("--verbose") || process.argv.includes("-v")
 
 const cssLoaderConfig = {
@@ -33,28 +33,24 @@ const config = {
 
     context: path.resolve(__dirname, "."),
 
-    entry: [
-        "./main"
-    ],
-
     resolve: {
         extensions: [".js", ".jsx"]
     },
 
-    output: {
-        path: path.resolve(__dirname, "../gen/browser-source"),
-        publicPath: "./",
-        filename: "[name].js",
-        sourcePrefix: "  "
-    },
+   // output: {
+    //    path: path.resolve(__dirname, "../gen/browser-source"),
+     //   publicPath: "./",
+      //  filename: "[name].js",
+       // sourcePrefix: "  "
+    //},
 
     // Developer tool to enhance debugging, source maps
     // http://webpack.github.io/docs/configuration.html#devtool
-    devtool: isDebug ? "source-map" : false,
+    devtool: isDebug ? "inline-source-map" : false,
 
     // What information should be printed to the console
     stats: {
-        colors: false,
+        colors: true,
         reasons: isDebug,
         hash: isVerbose,
         version: isVerbose,
@@ -125,7 +121,6 @@ if (!isDebug) {
         new webpack.optimize.AggressiveMergingPlugin,
         new webpack.optimize.OccurrenceOrderPlugin,
         new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true,
             compress: {
                 warnings: isVerbose
             }

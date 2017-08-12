@@ -1,0 +1,8 @@
+productName: Giolette
+appId: com.j4id.giolette
+directories:
+  output: release
+win:
+  icon: public/icon.ico
+linux:
+  category: Utility

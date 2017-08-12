@@ -1,1 +1,22 @@
-node_modules/jaid-web/.babelrc
+{
+    "presets": [
+        "env",
+        "stage-1",
+        "react"
+    ],
+    "env": {
+        "production": {
+            "comments": false,
+            "presets": [
+                "react-optimize",
+                "babili"
+            ],
+            "plugins": [
+                "lodash"
+            ]
+        },
+        "development": {
+            "sourceMaps": "inline"
+        }
+    }
+}

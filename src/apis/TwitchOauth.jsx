@@ -22,7 +22,7 @@ export default {
     tooltip: null,
     config: null,
 
-    // Set in electron.js
+    // Set in electron.jsx
     accessToken: null,
     idToken: null,
 

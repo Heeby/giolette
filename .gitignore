@@ -14,3 +14,8 @@
 # Build folder
 /dist/
 /gen/
+/release/
+
+# Compiled with Babel
+/electron.js
+/src/apis/*.js

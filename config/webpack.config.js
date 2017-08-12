@@ -7,7 +7,8 @@ import HtmlWebpackPlugin from "html-webpack-plugin"
 
 import appDescription from "./app_description"
 
-const isDebug = global.DEBUG === false ? false : !process.argv.includes("--prod")
+
+const isDebug = process.env.NODE_ENV !== "production"
 const isVerbose = process.argv.includes("--verbose") || process.argv.includes("-v")
 const isAnalyzing = process.argv.includes("--analyze")
 const useHMR = !!global.HMR // Hot Module Replacement (HMR)
@@ -38,23 +39,11 @@ const config = {
 
     context: path.resolve(__dirname, "../src"),
 
-    entry: [
-        "./main"
-    ],
-
     resolve: {
         extensions: [".js", ".jsx"]
     },
 
     target: "electron-renderer",
-
-    output: {
-        path: path.resolve(__dirname, "../dist/"),
-        publicPath: "./",
-        filename: isDebug ? "[name].js?[hash]" : "[name].[hash].js",
-        chunkFilename: isDebug ? "[id].js?[chunkhash]" : "[id].[chunkhash].js",
-        sourcePrefix: "  "
-    },
 
     // Developer tool to enhance debugging, source maps
     // http://webpack.github.io/docs/configuration.html#devtool
