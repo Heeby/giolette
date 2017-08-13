@@ -99,7 +99,7 @@ function createWindow() {
         darkTheme: true,
         autoHideMenuBar: true,
         webPreferences: {
-            devTools: isDebug,
+            devTools: true,
             defaultEncoding: "UTF-8",
             backgroundThrottling: false
         }

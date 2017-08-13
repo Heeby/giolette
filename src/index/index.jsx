@@ -22,7 +22,8 @@ export default class Index extends React.Component {
         this.state = {
             apis: electron.remote.getGlobal("apis"),
             customSpinUser: "J4idn",
-            tipeeEventsReceived: null,
+            tipeeeEventsReceived: null,
+            tipeeeEventsAccepted: null,
             apisWorking: false
         }
         this.state.apis.browserSource.htmlContent = browserSourceHtml
@@ -52,7 +53,6 @@ export default class Index extends React.Component {
 
 
     }
-
 
     loginWithTwitch = () => {
         electron.remote.getGlobal("initTwitchAuth")()
@@ -89,12 +89,60 @@ export default class Index extends React.Component {
     startTipeee = () => {
         console.log("Starting")
         this.state.apis.tipeee.addListener(data => {
-            if (data.event.type === "subscription" || (data.event.type === "donation" && data.event.parameters.amount >= 5)) {
-                this.spin(data.event.parameters.username)
-                this.setState({tipeeEventsReceived: this.state.tipeeeEventsReceived + 1})
+
+            if (!data.event.parameters.username) {
+             console.log(`Skipping user with broken name ${data.event.parameters.username}`)
+                return
             }
+
+            if (data.event.type !== "subscription" && data.event.type !== "donation") {
+                console.log(`I don't need the event type ${data.event.type}! Skipping.`)
+                return
+            }
+
+            this.setState({tipeeeEventsReceived: this.state.tipeeeEventsReceived + 1})
+
+            let spins
+            if (data.event.type === "donation") {
+
+                if (data.event.parameters.currency !== "EUR") {
+                    console.log(`Ignoring currency ${data.event.parameters.currency}`)
+                    return
+                }
+
+                console.log(`${data.event.parameters.username}: ${data.event.parameters.amount} ${data.event.parameters.currency}`)
+                spins = lodash.floor(data.event.parameters.amount / 5)
+
+            } else {
+
+                console.log(`${data.event.parameters.username}: Subscription plan ${data.event.parameters.plan} (${+data.event.parameters.resub + 1} months)`)
+
+                if (data.event.parameters.plan === "3000") {
+                    spins = 8
+                } else if (data.event.parameters.plan === "2000") {
+                    spins = 3
+                } else {
+                    spins = 1
+                }
+
+            }
+
+            if (spins < 1) {
+                console.log(`${data.event.parameters.username}: spins is ${spins}, skipping`)
+                return
+            }
+
+            console.log(`${data.event.parameters.username} gets ${spins} spins from Tipeee ${data.event.type} event`)
+
+            for (let i = 0; i < spins; i++) {
+                setTimeout(() => this.spin(data.event.parameters.username), (i + 3) * 1000)
+            }
+
+            this.setState({tipeeeEventsAccepted: this.state.tipeeeEventsAccepted + 1})
+
         })
         this.setState({tipeeeEventsReceived: 0})
+        this.setState({tipeeeEventsAccepted: 0})
     }
 
     render() {
@@ -134,7 +182,8 @@ export default class Index extends React.Component {
                 <Button onClick={() => this.testApis()} containerClassName={css.button} text="Test APIs" />
                 {this.state.apisWorking && <Button onClick={this.startTipeee} containerClassName={css.button} text="Start Tipeee" />}
                 {Number.isInteger(this.state.tipeeeEventsReceived) &&
-                <span className={css.tipeeeEvents}>Connected to Tipeee (Events received: {this.state.tipeeeEventsReceived})</span>}
+                <span className={css.tipeeeEvents}>Connected to
+                    Tipeee ({this.state.tipeeeEventsAccepted} of {this.state.tipeeeEventsReceived} events accepted)</span>}
                 <br />
                 <div style={{height: "100px"}} />
                 Prizes

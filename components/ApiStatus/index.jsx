@@ -10,7 +10,7 @@ const colorFilters = {
     error: "brightness(50%) sepia(1) saturate(80) hue-rotate(355deg)"
 }
 
-export default class Component extends React.Component {
+export default class ApiStatus extends React.Component {
 
     constructor(props) {
         super(props)

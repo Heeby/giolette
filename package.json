@@ -97,7 +97,7 @@
     "run-prod": "npm run build-prod && NODE_ENV=production ./node_modules/.bin/electron .",
     "run-dev": "npm run build-dev && ./node_modules/.bin/electron .",
     "run-dev-uncleaned": "./node_modules/.bin/rimraf ./node_modules/ && mv .yarnclean .yarnclean.disabled && yarn install && mv .yarnclean.disabled .yarnclean && yarn run run-dev",
-    "pack-windows": "gulp clean && npm run build-prod && ./node_modules/.bin/electron-builder --win zip --x64",
-    "pack-linux": "gulp clean && npm run build-prod && ./node_modules/.bin/electron-builder --linux AppImage --x64"
+    "pack-windows": "gulp clean && npm run build-dev && ./node_modules/.bin/electron-builder --win zip --x64",
+    "pack-linux": "gulp clean && npm run build-dev && ./node_modules/.bin/electron-builder --linux AppImage --x64"
   }
 }
