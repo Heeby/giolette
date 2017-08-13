@@ -1,1 +1,97 @@
-../node_modules/jaid-web/config/index.ejs
+<!doctype html>
+<html lang="<%= htmlWebpackPlugin.options.appDescription.language %>" class="no-js">
+<head>
+
+    <meta charset="utf-8">
+
+    <title><%= htmlWebpackPlugin.options.appDescription.title %></title>
+
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="application-name" content="<%= htmlWebpackPlugin.options.appDescription.title %>">
+    <meta name="description" content="<%= htmlWebpackPlugin.options.appDescription.description %>">
+    <meta name="author" content="<%= htmlWebpackPlugin.options.appDescription.authorName %>">
+    <link rel='publisher' href="<%= htmlWebpackPlugin.options.appDescription.authorUrl %>">
+
+    <% if (htmlWebpackPlugin.options.appDescription.appleMeta) { %>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="<%= htmlWebpackPlugin.options.appDescription.appleMeta.statusBarStyle %>">
+    <meta name="format-detection" content="telephone=<%= htmlWebpackPlugin.options.appDescription.appleMeta.parsePhoneNumbers ? "yes" : "no" %>">
+    <% } %>
+
+    <% if (htmlWebpackPlugin.options.appDescription.openGraph) { %>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= htmlWebpackPlugin.options.appDescription.openGraph.title %>" />
+    <meta property="og:url" content="<%= htmlWebpackPlugin.options.appDescription.openGraph.url %>" />
+    <meta property="og:image" content="<%= htmlWebpackPlugin.options.appDescription.openGraph.image %>" />
+    <meta property="og:image:width" content="<%= htmlWebpackPlugin.options.appDescription.openGraph.imageWidth %>" />
+    <meta property="og:image:height" content="<%= htmlWebpackPlugin.options.appDescription.openGraph.imageHeight %>" />
+    <meta property="og:locale" content="<%= htmlWebpackPlugin.options.appDescription.openGraph.locale %>" />
+    <meta property="og:description" content="<%= htmlWebpackPlugin.options.appDescription.openGraph.description %>" />
+    <% } %>
+
+    <% if (htmlWebpackPlugin.options.appDescription.openGraphFacebook) { %>
+    <meta property="og:updated_time" content="<%= htmlWebpackPlugin.options.appDescription.openGraphFacebook.updatedTime %>" />
+    <meta property="fb:profile_id" content="<%= htmlWebpackPlugin.options.appDescription.openGraphFacebook.authorProfileId %>" />
+    <% } %>
+
+    <% if (htmlWebpackPlugin.options.appDescription.twitterCard) { %>
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:site" content="<%= htmlWebpackPlugin.options.appDescription.twitterCard.businessProfileHandle %>" />
+    <meta property="twitter:creator" content="<%= htmlWebpackPlugin.options.appDescription.twitterCard.authorProfileHandle %>" />
+    <meta property="twitter:title" content="<%= htmlWebpackPlugin.options.appDescription.twitterCard.title %>" />
+    <meta property="twitter:description" content="<%= htmlWebpackPlugin.options.appDescription.twitterCard.description %>" />
+    <meta property="twitter:image" content="<%= htmlWebpackPlugin.options.appDescription.twitterCard.image %>" />
+    <% } %>
+
+    <% if (htmlWebpackPlugin.options.appDescription.fontAwesome) { %>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/<%= htmlWebpackPlugin.options.appDescription.fontAwesome.version %>/css/font-awesome.min.css"
+          rel="stylesheet"
+          crossorigin="anonymous">
+    <% } %>
+
+    <% if (htmlWebpackPlugin.options.appDescription.googleFonts) { htmlWebpackPlugin.options.appDescription.googleFonts.forEach(function(font) { %>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=<%= font %>">
+    <% }) } %>
+
+    <%- htmlWebpackPlugin.options.faviconHeaders %>
+
+    <% if (!htmlWebpackPlugin.options.debug && htmlWebpackPlugin.options.appDescription.googleAnalytics) { %>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "<%= htmlWebpackPlugin.options.appDescription.googleAdsense.adClient %>",
+            enable_page_level_ads: true
+        })
+    </script>
+    <% } %>
+
+    <script>
+
+        window.appDescription = {
+
+            <% if (htmlWebpackPlugin.options.debug) { %>
+            debug: true,
+            <% } %>
+
+            <% if (htmlWebpackPlugin.options.appDescription.googleAnalytics.trackingId) { %>
+            googleAnalyticsTrackingId: "<%= htmlWebpackPlugin.options.appDescription.googleAnalytics.trackingId %>",
+            <% } %>
+
+            title: "<%= htmlWebpackPlugin.options.appDescription.title %>",
+            version: "<%= htmlWebpackPlugin.options.appDescription.version %>",
+            description: "<%= htmlWebpackPlugin.options.appDescription.description %>",
+            authorName: "<%= htmlWebpackPlugin.options.appDescription.authorName %>",
+            authorUrl: "<%= htmlWebpackPlugin.options.appDescription.authorUrl %>"
+        }
+
+    </script>
+
+</head>
+
+<body>
+<div id='react'></div>
+</body>
+
+</html>

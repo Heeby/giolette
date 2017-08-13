@@ -4,7 +4,7 @@ import {BundleAnalyzerPlugin} from "webpack-bundle-analyzer"
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import HtmlWebpackInlineSourcePlugin from "html-webpack-inline-source-plugin"
 
-const isDebug = process.env.NODE_ENV !== "production"
+const isDebug = global.DEBUG === true ? true : process.env.NODE_ENV !== "production"
 const isVerbose = process.argv.includes("--verbose") || process.argv.includes("-v")
 
 const cssLoaderConfig = {
@@ -71,7 +71,7 @@ const config = {
             minimize: !isDebug
         }),
         new HtmlWebpackPlugin({
-            inlineSource: ".(js|css)$",
+            inlineSource: ".js$",
             template: path.resolve(__dirname, "./index.html"),
             minify: isDebug ? null : htmlMinifyConfig
         }),

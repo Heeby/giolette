@@ -12,10 +12,10 @@ import webpackDevServer from "webpack-dev-server"
 import appDescription from "./config/app_description"
 import faviconsConfig from "./config/favicons"
 
-const isDebug = process.env.NODE_ENV !== "production"
+const isDebug = global.DEBUG === true ? true : process.env.NODE_ENV !== "production"
 
 gulp.task("clean", function () {
-    return gulp.src(["gen/", "dist/"], {read: false})
+    return gulp.src(["gen/", "dist/", "release/"], {read: false})
         .pipe(gulpClean())
 })
 
@@ -39,7 +39,7 @@ gulp.task("babel", () => {
         .pipe(gulp.dest("."))
 })
 
-gulp.task("build", ["babel", "copy-public", "favicons", "build-browser-source"], (callback) => {
+gulp.task("build", ["babel", "copy-public", "favicons", "build-browser-source"], () => {
     return gulp.src("./src/main.jsx")
         .pipe(gulpWebpack(require("./config/webpack.config")))
         .pipe(gulp.dest("./dist"))

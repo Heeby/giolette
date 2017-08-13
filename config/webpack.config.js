@@ -2,16 +2,14 @@ import fs from "fs"
 import path from "path"
 import webpack from "webpack"
 import {BundleAnalyzerPlugin} from "webpack-bundle-analyzer"
-import OfflinePlugin from "offline-plugin"
 import HtmlWebpackPlugin from "html-webpack-plugin"
+import HtmlWebpackInlineSourcePlugin from "html-webpack-inline-source-plugin"
 
 import appDescription from "./app_description"
 
-
-const isDebug = process.env.NODE_ENV !== "production"
+const isDebug = global.DEBUG === true ? true : process.env.NODE_ENV !== "production"
 const isVerbose = process.argv.includes("--verbose") || process.argv.includes("-v")
 const isAnalyzing = process.argv.includes("--analyze")
-const useHMR = !!global.HMR // Hot Module Replacement (HMR)
 
 const cssLoaderConfig = {
     sourceMap: isDebug,
@@ -47,7 +45,7 @@ const config = {
 
     // Developer tool to enhance debugging, source maps
     // http://webpack.github.io/docs/configuration.html#devtool
-    devtool: isDebug ? "source-map" : false,
+    devtool: isDebug ? "inline-source-map" : false,
 
     // What information should be printed to the console
     stats: {
@@ -79,18 +77,18 @@ const config = {
             showErrors: isVerbose,
             minify: isDebug ? null : htmlMinifyConfig,
             filename: "index.html",
-            inject: "body"
-        })
+            inlineSource: ".js$"
+        }),
+        new HtmlWebpackInlineSourcePlugin
     ],
 
     module: {
         rules: [
             {
-                test: /\.jsx?$/,
+                test: /\.jsx/, // Enforces uncompiled files to end with .jsx
                 include: [
                     path.resolve(__dirname, "../src"),
-                    path.resolve(__dirname, "../components"),
-                    path.resolve(__dirname, "../node_modules/jaid-web"),
+                    path.resolve(__dirname, "../components")
                 ],
                 use: "babel-loader"
             },
@@ -106,7 +104,7 @@ const config = {
                 ]
             },
             {
-                test: /\.(png|jpg|jpeg|gif|svg|woff2)$/,
+                test: /\.(png|jpg|jpeg|gif|svg|woff2|ico)$/,
                 loader: "url-loader"
             },
             {
@@ -132,7 +130,7 @@ const config = {
 // Optimizations in prod build
 if (!isDebug) {
     config.plugins = config.plugins.concat([
-        // new webpack.optimize.AggressiveMergingPlugin, // Conflict with ServiceWorker from OfflinePlugin
+        new webpack.optimize.AggressiveMergingPlugin,
         new webpack.optimize.OccurrenceOrderPlugin,
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: true,
@@ -147,12 +145,6 @@ if (isAnalyzing) {
     config.plugins = config.plugins.concat([
         new BundleAnalyzerPlugin
     ])
-}
-
-// Hot Module Replacement (HMR) + React Hot Reload
-if (isDebug && useHMR) {
-    config.plugins.push(new webpack.HotModuleReplacementPlugin())
-    config.plugins.push(new webpack.NoEmitOnErrorsPlugin())
 }
 
 module.exports = config

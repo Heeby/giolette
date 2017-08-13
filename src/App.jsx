@@ -7,6 +7,8 @@ import css from "./style.css"
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom"
 import Index from "./index"
 
+import icon from "../dist/favicon.ico"
+
 export default class App extends React.Component {
 
     static propTypes = {
@@ -29,7 +31,7 @@ export default class App extends React.Component {
         return (
             <div className={classnames(this.props.className)}>
                 <Router>
-                    <Layout className={css.content} icon="./favicon.ico" creditsBaseText="Jaid made this one for Gio with">
+                    <Layout className={css.content} icon={icon} creditsBaseText="Jaid made this one for Giorap90 with">
                         {window.location.pathname.includes('index.html') && <Redirect to="/" />}
                         <Route path="/" component={this.updatePage} />
                         <Switch>

@@ -1,12 +1,11 @@
-const isDebug = process.env.NODE_ENV !== "production"
+const isDebug = global.DEBUG === true ? true : process.env.NODE_ENV !== "production"
 
-import {app, BrowserWindow} from "electron"
+import {app, BrowserWindow, Menu, Tray} from "electron"
 import installExtension, {REACT_DEVELOPER_TOOLS} from "electron-devtools-installer"
 
 import fs from "fs-extra"
 import path from "path"
 import url from "url"
-import mkdirp from "mkdirp"
 import queryString from "query-string"
 import yaml from "js-yaml"
 
@@ -22,6 +21,7 @@ import websocketApi from "./src/apis/WebSocket"
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let authWindow
+let tray
 
 const configDir = path.resolve(".", "giolette-config")
 console.log(`Working in: ${configDir}`)
@@ -31,15 +31,19 @@ function createDefaultFile(filename) {
 
         const outputFile = path.resolve(configDir, filename)
 
-        try {
-            fs.accessSync(outputFile)
+        if (fs.existsSync(outputFile)) {
             console.log(`File ${filename} found!`)
             resolve()
-        } catch (error) {
-            console.log(`Creating default file ${filename}`)
-            fs.copy(`config/defaults/${filename}`, outputFile, {}, resolve)
-            global.errorMessage = `I created ${outputFile} for you! Please edit this file and start me again!`
+            return
         }
+
+        const defaultFile = path.resolve(`config/defaults/${filename}`)
+        console.log(`${defaultFile} -> ${outputFile}`)
+        fs.copy(path.resolve(__dirname, `config/defaults/${filename}`), outputFile, {
+            overwrite: true,
+            dereference: true
+        }, resolve)
+        global.errorMessage = `I created ${outputFile} for you! Please edit this file and start me again!`
 
     })
 }
@@ -108,13 +112,33 @@ function createWindow() {
     }))
 
     // Emitted when the window is closed.
-    mainWindow.on("closed", function () {
+    mainWindow.on("closed", () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null
     })
 
+    mainWindow.on("minimize", event => {
+        event.preventDefault()
+        mainWindow.hide()
+    })
+
+    tray = new Tray(path.join(__dirname, "dist/favicon-32x32.png"))
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: "Quit",
+            click: () => {
+                app.isQuiting = true
+                app.quit()
+            }
+        }
+    ])
+    tray.setToolTip("gioGoennung")
+    tray.setContextMenu(contextMenu)
+    tray.on("click", event => {
+        mainWindow.show()
+    })
 }
 
 const initTwitchAuth = () => {

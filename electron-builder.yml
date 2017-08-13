@@ -1,5 +1,14 @@
 productName: Giolette
 appId: com.j4id.giolette
+files:
+  - "dist/index.html"
+  - "dist/firefox_app_128x128.png"
+  - "dist/favicon-32x32.png"
+  - "config/defaults"
+  - "electron.js"
+  - "license.txt"
+  - "src/apis/*.js"
+  - "!**/node_modules/.bin"
 directories:
   output: release
 win:

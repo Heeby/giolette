@@ -50,8 +50,8 @@ export default {
             .then(() => this.testWebsocket(this.config))
     },
 
-    async send(spin) {
-        await this.init()
-        this.websocketServer.broadcast(JSON.stringify(spin))
+    send(spin) {
+        return this.init()
+            .then(() => this.websocketServer.broadcast(JSON.stringify(spin)))
     }
 }

@@ -4,16 +4,12 @@
   url: https://github.com/npm/npm
 - name: Babel
   url: https://github.com/babel/babel
-- name: Browsersync
-  url: https://github.com/BrowserSync/browser-sync
 - name: EJS
   url: https://github.com/mde/ejs
 - name: Gulp
   url: https://github.com/gulpjs/gulp
 - name: Lodash
   url: https://github.com/lodash/lodash
-- name: offline-plugin
-  url: https://github.com/NekR/offline-plugin
 - name: PostCSS
   url: https://github.com/postcss/postcss
 - name: React
