@@ -8,7 +8,7 @@ const onDeepbotMessage = (message) => {
 }
 
 export default {
-    name: "Deepbot",
+    name: "DeepBot",
     id: "deepbot",
     status: "pending",
     tooltip: null,
@@ -53,9 +53,14 @@ export default {
         const socket = this.socket
         return this.init().then(() => new Promise((resolve, reject) => {
             const messageListener = (message) => {
-                const result = JSON.parse(message)
+                try {
+                    const result = JSON.parse(message)
+                } catch(e) {
+                    console.log(`Ignoring non-JSON message from DeepBot: ${message}`)
+                    return
+                }
                 if (!result || !result.function || result.function !== "get_points" || !result.param || result.param.toLowerCase() !== name.toLowerCase()) {
-                    console.log(`Wrong message from Deepbot: ${JSON.stringify(result)}`)
+                    console.log(`Ignoring wrong message from DeepBot: ${JSON.stringify(result)}`)
                     return
                 }
                 console.log(`${name}: ${numeral(result.msg.replace(",", ".")).value()}`)

@@ -90,7 +90,7 @@ export default class App extends React.Component {
                 <Button onClick={this.onPushMessage} text="Push Message" />
             </div>
             <ReactInterval enabled={true} timeout={1000} callback={this.checkQueue} />
-            <Websocket url='ws://localhost:24491' onMessage={this.onMessage} />
+            <Websocket reconnectIntervalInMilliSeconds={2000} url='ws://localhost:24491' onMessage={this.onMessage} />
             {this.state.currentRun &&
             <Wheel onFinish={() => this.setState({currentRun: null})} key={this.state.currentRunId} run={this.state.currentRun} />}
         </div>
