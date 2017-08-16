@@ -52,7 +52,7 @@ function createWindow() {
 
     const prizesFile = path.resolve(configDir, "prizes.yml")
     const configFile = path.resolve(configDir, "config.yml")
-    const prizes = yaml.safeLoad(fs.readFileSync(prizesFile))
+    const prizes = yaml.safeLoad(fs.readFileSync(prizesFile)).filter(prize => prize.weight > 0)
     const config = yaml.safeLoad(fs.readFileSync(configFile))
 
     if (!prizes) {
