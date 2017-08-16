@@ -190,7 +190,7 @@ export default class Index extends React.Component {
                 <Hr />
                 {prizes.map(prize =>
                     <div className={css.prize}>
-                        <img className={css.prizeIcon} src={require(`../res/images/prizes/${prize.icon}.png`)} style={{
+                        <img className={css.prizeIcon} src={require(`../res/images/prizes/${prize.icon || "generic"}.png`)} style={{
                             filter: `brightness(${prize.brightness || 90}%) sepia(100%) saturate(${prize.saturation || 600}%) hue-rotate(${prize.hue || 170}deg)`
                         }} />
                         <span>{prize.name}</span>
