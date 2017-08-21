@@ -1,7 +1,6 @@
 import fs from "fs"
 import path from "path"
 import webpack from "webpack"
-import {BundleAnalyzerPlugin} from "webpack-bundle-analyzer"
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import HtmlWebpackInlineSourcePlugin from "html-webpack-inline-source-plugin"
 
@@ -149,12 +148,6 @@ if (!isDebug) {
                 warnings: isVerbose
             }
         })
-    ])
-}
-
-if (isAnalyzing) {
-    config.plugins = config.plugins.concat([
-        new BundleAnalyzerPlugin
     ])
 }
 

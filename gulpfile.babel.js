@@ -50,37 +50,3 @@ gulp.task("build-browser-source", () => {
         .pipe(gulpWebpack(require("./browser_source/webpack.config")))
         .pipe(gulp.dest("./gen/browser-source"))
 })
-
-gulp.task("run", ["copy-public", "favicons"], () => {
-
-    let count = 0
-    const browserSync = require("browser-sync")
-    const reload = browserSync.reload
-    const port = process.env.PORT || 3000
-    const webpackConfig = require("./config/webpack.config")
-    const compiler = webpack(webpackConfig)
-
-    const webpackDevMiddleware = require("webpack-dev-middleware")(compiler, {
-        publicPath: webpackConfig.output.publicPath,
-        stats: webpackConfig.stats
-    })
-
-    compiler.plugin("done", (stats) => {
-        count += 1
-        if (count === 1) {
-            browserSync({
-                server: {
-                    port: port,
-                    ui: port + 1,
-                    baseDir: "dist",
-                    middleware: [
-                        webpackDevMiddleware,
-                        require("webpack-hot-middleware")(compiler),
-                        require("connect-history-api-fallback")()
-                    ]
-                }
-            })
-        }
-    })
-
-})
