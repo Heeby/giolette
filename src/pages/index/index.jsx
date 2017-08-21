@@ -2,17 +2,21 @@ import React from "react"
 import electron, {BrowserWindow} from "electron"
 import weightedChoice from "random-weighted-choice"
 import lodash from "lodash"
+import PropTypes from "prop-types"
 
 import {Link} from "react-router-dom"
 import ReactTooltip from "react-tooltip"
-import ApiStatus from "../../components/ApiStatus"
+import ApiStatus from "../../../components/ApiStatus"
 import Button from "jaid-web/components/Button"
-import Hr from "jaid-web/components/Hr"
 import css from "./style.css"
 
-import browserSourceHtml from "raw-loader!./../../gen/browser-source/index.html"
+import browserSourceHtml from "raw-loader!./../../../gen/browser-source/index.html"
 
-export default class Index extends React.Component {
+export default class IndexPage extends React.Component {
+
+    static propTypes = {
+        theme: PropTypes.object.isRequired
+    }
 
     componentDidMount() {
     }
@@ -147,6 +151,7 @@ export default class Index extends React.Component {
 
     render() {
 
+        const errorMessage = electron.remote.getGlobal("errorMessage")
         const apis = Object.keys(this.state.apis).map((i) => {
             const api = this.state.apis[i]
             return (
@@ -160,43 +165,26 @@ export default class Index extends React.Component {
             )
         })
 
-        const errorMessage = electron.remote.getGlobal("errorMessage")
-        const prizes = electron.remote.getGlobal("prizes")
-
         return (
-
             <div>
                 {errorMessage && <div className={css.errorMessage}>{errorMessage}</div>}
                 <div className={css.customSpin}>
                     <input defaultValue="J4idn" onChange={(event) => this.setState({customSpinUser: event.target.value.trim()})}
                            className={css.customSpinInput} />
-                    <Button className={css.customSpinButton} icon="play-circle" onClick={this.customSpin}
+                    <Button enabled={this.state.apisWorking} theme={this.props.theme} className={css.customSpinButton} icon="play-circle" onClick={this.customSpin}
                             text={this.state.customSpinUser ? `Spin for ${this.state.customSpinUser}!` : "Spin"} />
                 </div>
-                Setting up your APIs
-                <Hr />
+                Setting up {apis.length} APIs
+                <hr />
                 <div className={css.apiStatusContainer}>
                     {apis}
                 </div>
                 <br />
-                <Button onClick={() => this.testApis()} containerClassName={css.button} text="Test APIs" />
-                {this.state.apisWorking && <Button onClick={this.startTipeee} containerClassName={css.button} text="Start Tipeee" />}
+                <Button theme={this.props.theme} onClick={() => this.testApis()} containerClassName={css.button} text="Test APIs" />
+                 <Button theme={this.props.theme} enabled={this.state.apisWorking} onClick={this.startTipeee} containerClassName={css.button} text="Start Tipeee" />
                 {Number.isInteger(this.state.tipeeeEventsReceived) &&
                 <span className={css.tipeeeEvents}>Connected to
                     Tipeee ({this.state.tipeeeEventsAccepted} of {this.state.tipeeeEventsReceived} events accepted)</span>}
-                <br />
-                <div style={{height: "100px"}} />
-                Prizes
-                <Hr />
-                {prizes.map(prize =>
-                    <div className={css.prize}>
-                        <img className={css.prizeIcon} src={require(`../res/images/prizes/${prize.icon || "generic"}.png`)} style={{
-                            filter: `brightness(${prize.brightness || 90}%) sepia(100%) saturate(${prize.saturation || 600}%) hue-rotate(${prize.hue || 170}deg)`
-                        }} />
-                        <span>{prize.name}</span>
-                        <span>{prize.weight} weight ({lodash.round(prize.weightNormalized * 100, 2)}%)</span>
-                    </div>)}
-
             </div>
         )
     }

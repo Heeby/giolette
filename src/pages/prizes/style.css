@@ -1,0 +1,17 @@
+.prize {
+    display: flex;
+    align-items: center;
+}
+
+.prize > * {
+    padding-right: 50px;
+}
+
+.prizeIcon {
+    width: 80px;
+    height: 80px;
+}
+
+.tipeeeEvents {
+    color: green;
+}

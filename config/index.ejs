@@ -47,8 +47,7 @@
 
     <% if (htmlWebpackPlugin.options.appDescription.fontAwesome) { %>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/<%= htmlWebpackPlugin.options.appDescription.fontAwesome.version %>/css/font-awesome.min.css"
-          rel="stylesheet"
-          crossorigin="anonymous">
+          rel="stylesheet">
     <% } %>
 
     <% if (htmlWebpackPlugin.options.appDescription.googleFonts) { htmlWebpackPlugin.options.appDescription.googleFonts.forEach(function(font) { %>
@@ -57,7 +56,7 @@
 
     <%- htmlWebpackPlugin.options.faviconHeaders %>
 
-    <% if (!htmlWebpackPlugin.options.debug && htmlWebpackPlugin.options.appDescription.googleAnalytics) { %>
+    <% if (!htmlWebpackPlugin.options.debug && htmlWebpackPlugin.options.appDescription.googleAdsense.adClient) { %>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({

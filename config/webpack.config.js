@@ -100,7 +100,18 @@ const config = {
                         loader: "css-loader",
                         options: cssLoaderConfig
                     },
-                    "postcss-loader"
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            sourceMap: "inline",
+                            config: {
+                                path: path.resolve(__dirname, "postcss.config.js"),
+                                ctx: {
+                                    debug: isDebug
+                                }
+                            }
+                        }
+                    }
                 ]
             },
             {

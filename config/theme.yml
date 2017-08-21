@@ -1,0 +1,25 @@
+scrollbar:
+  width: 8px
+
+primary-color:
+  hue: 250
+  saturation: 60%
+  lightness: 45%
+
+background:
+  lightness: 10%
+
+header-bar:
+  title:
+    margin: 20px
+    shadow-opacity: 0.2
+  height: 60px
+
+content:
+  margin: 40px
+
+button:
+  lightness: 80%
+
+hr:
+  opacity: 0.3

@@ -1,0 +1,8 @@
+- name: Status
+  link: /
+- name: Prizes
+  link: /prizes
+- name: Chat Prizes
+  link: /chat-prizes
+- name: Color Editor
+  link: /color-editor

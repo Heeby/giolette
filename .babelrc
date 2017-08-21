@@ -8,8 +8,7 @@
         "production": {
             "comments": false,
             "presets": [
-                "react-optimize",
-                "babili"
+                "react-optimize"
             ],
             "plugins": [
                 "lodash"
