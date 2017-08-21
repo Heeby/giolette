@@ -1,17 +1,16 @@
-.prize {
-    display: flex;
-    align-items: center;
-}
-
-.prize > * {
-    padding-right: 50px;
+.code {
+    font-family: Source Code Pro, Ubuntu Mono, monospace;
+    background: rgba(255, 255, 255, 0.05);
+    margin-top: 20px;
+    padding: 40px;
+    color: #c7c7c7;
 }
 
 .prizeIcon {
-    width: 80px;
-    height: 80px;
-}
-
-.tipeeeEvents {
-    color: green;
+    width: 120px;
+    height: 120px;
+    float: right;
+    position: relative;
+    bottom: 69px;
+    left: 39px;
 }
