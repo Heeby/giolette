@@ -92,7 +92,7 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 720,
-        height: 720,
+        height: 760,
         minWidth: 500,
         minHeight: 300,
         icon: path.join(__dirname, "dist/firefox_app_128x128.png"),

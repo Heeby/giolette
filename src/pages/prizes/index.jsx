@@ -6,26 +6,21 @@ import {Link} from "react-router-dom"
 import ReactTooltip from "react-tooltip"
 import css from "./style.css"
 
-export default class PagePage extends React.Component {
+export default class PrizesPage extends React.Component {
 
     componentDidMount() {
     }
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            prizes: electron.remote.getGlobal("prizes")
-        }
-    }
-
     render() {
+        const prizes = electron.remote.getGlobal("prizes")
+
         return (
             <div>
                 {prizes.length} Prizes
                 <hr />
                 {prizes.map(prize =>
                     <div className={css.prize}>
-                        <img className={css.prizeIcon} src={require(`../res/images/prizes/${prize.icon || "generic"}.png`)} style={{
+                        <img className={css.prizeIcon} src={require(`../../res/images/prizes/${prize.icon || "generic"}.png`)} style={{
                             filter: `brightness(${prize.brightness || 90}%) sepia(100%) saturate(${prize.saturation || 600}%) hue-rotate(${prize.hue || 170}deg)`
                         }} />
                         <span>{prize.name}</span>

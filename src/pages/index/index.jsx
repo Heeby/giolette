@@ -167,6 +167,8 @@ export default class IndexPage extends React.Component {
 
         return (
             <div>
+                Custom Spin
+                <hr />
                 {errorMessage && <div className={css.errorMessage}>{errorMessage}</div>}
                 <div className={css.customSpin}>
                     <input defaultValue="J4idn" onChange={(event) => this.setState({customSpinUser: event.target.value.trim()})}
