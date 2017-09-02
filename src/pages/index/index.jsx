@@ -8,6 +8,7 @@ import {Link} from "react-router-dom"
 import ReactTooltip from "react-tooltip"
 import ApiStatus from "../../../components/ApiStatus"
 import Button from "jaid-web/components/Button"
+import Interval from "react-interval"
 import css from "./style.css"
 
 import browserSourceHtml from "raw-loader!./../../../gen/browser-source/index.html"
@@ -15,26 +16,32 @@ import browserSourceHtml from "raw-loader!./../../../gen/browser-source/index.ht
 export default class IndexPage extends React.Component {
 
     static propTypes = {
-        theme: PropTypes.object.isRequired
+        theme: PropTypes.object.isRequired,
+        onApisTested: PropTypes.func
     }
 
     componentDidMount() {
     }
 
     constructor(props) {
+        console.log("constructor")
         super(props)
         this.state = {
             apis: electron.remote.getGlobal("apis"),
             customSpinUser: "J4idn",
             tipeeeEventsReceived: null,
             tipeeeEventsAccepted: null,
-            apisWorking: false
+            apisWorking: false,
+            customSpins: null,
+            customChatSpins: null,
+            autoChatSpins: null
         }
         this.state.apis.browserSource.htmlContent = browserSourceHtml
     }
 
     testApis = (apis) => {
         this.setState({apisWorking: true})
+        this.props.onApisTested()
         apis = Array.isArray(apis) ? apis : Object.values(this.state.apis)
 
         apis.forEach((api) => {
@@ -54,20 +61,42 @@ export default class IndexPage extends React.Component {
                     this.forceUpdate(null)
                 })
         })
-
-
-    }
-
-    loginWithTwitch = () => {
-        electron.remote.getGlobal("initTwitchAuth")()
     }
 
     customSpin = () => {
-        this.spin(this.state.customSpinUser)
+        this.spin(this.state.customSpinUser, "custom_spin")
+        this.setState({
+            customSpins: this.state.customSpins + 1
+        })
     }
 
-    spin = (user) => {
-        const prizes = electron.remote.getGlobal("prizes")
+    customChatSpin = () => {
+        this.chatSpin()
+        this.setState({
+            customChatSpins: this.state.customChatSpins + 1
+        })
+    }
+
+    chatSpin = () => {
+        this.state.apis.twitchPublic.getChatters().then(chatters => {
+            const pickedUser = lodash.sample(chatters)
+            if (!pickedUser) {
+                console.log(`pickedUser is ${pickedUser}`)
+                return
+            }
+            console.log(`Chat spin: ${pickedUser}`)
+            this.spin(pickedUser, "chat_spin", electron.remote.getGlobal("chatPrizes"))
+        })
+    }
+
+    autoChatSpin = () => {
+        this.setState({
+            autoChatSpins: this.state.autoChatSpins + 1
+        })
+        this.chatSpin()
+    }
+
+    spin = (user, reason, prizes = electron.remote.getGlobal("prizes")) => {
         const weights = prizes.map((prize) => ({id: prize.name, weight: prize.weight}))
         const selectedPrize = lodash.find(prizes, {name: weightedChoice(weights)})
         const fakePrizes = []
@@ -83,7 +112,8 @@ export default class IndexPage extends React.Component {
                 avatar: data[0].avatar,
                 points: data[1],
                 prize: selectedPrize,
-                fake_prizes: fakePrizes
+                fake_prizes: fakePrizes,
+                reason: reason
             }
             this.state.apis.websocket.send(spin)
             this.state.apis.discord.log(spin)
@@ -91,11 +121,10 @@ export default class IndexPage extends React.Component {
     }
 
     startTipeee = () => {
-        console.log("Starting")
         this.state.apis.tipeee.addListener(data => {
 
             if (!data.event.parameters.username) {
-             console.log(`Skipping user with broken name ${data.event.parameters.username}`)
+                console.log(`Skipping user with broken name ${data.event.parameters.username}`)
                 return
             }
 
@@ -139,7 +168,7 @@ export default class IndexPage extends React.Component {
             console.log(`${data.event.parameters.username} gets ${spins} spins from Tipeee ${data.event.type} event`)
 
             for (let i = 0; i < spins; i++) {
-                setTimeout(() => this.spin(data.event.parameters.username), (i + 3) * 1000)
+                setTimeout(() => this.spin(data.event.parameters.username, "tipeee"), (i + 3) * 1000)
             }
 
             this.setState({tipeeeEventsAccepted: this.state.tipeeeEventsAccepted + 1})
@@ -173,8 +202,14 @@ export default class IndexPage extends React.Component {
                 <div className={css.customSpin}>
                     <input defaultValue="J4idn" onChange={(event) => this.setState({customSpinUser: event.target.value.trim()})}
                            className={css.customSpinInput} />
-                    <Button enabled={this.state.apisWorking} theme={this.props.theme} className={css.customSpinButton} icon="play-circle" onClick={this.customSpin}
+                    <Button enabled={this.state.apisWorking} theme={this.props.theme} className={css.customSpinButton} icon="play-circle"
+                            onClick={this.customSpin}
                             text={this.state.customSpinUser ? `Spin for ${this.state.customSpinUser}!` : "Spin"} />
+                    {this.state.customSpins && <span className={css.customSpinText}>Times used: {this.state.customSpins}</span>}
+                    <br /><br />
+                    <Button onClick={this.customChatSpin} enabled={this.state.apisWorking} theme={this.props.theme} icon="play-circle"
+                            text={`Chat spin for someone viewing ${this.state.apis.twitchPublic.config.channel_name}`} className={css.chatSpinButton} />
+                    {this.state.customChatSpins && <span className={css.customChatSpinText}>Times used: {this.state.customChatSpins}</span>}
                 </div>
                 Setting up {apis.length} APIs
                 <hr />
@@ -182,11 +217,18 @@ export default class IndexPage extends React.Component {
                     {apis}
                 </div>
                 <br />
-                <Button theme={this.props.theme} onClick={() => this.testApis()} containerClassName={css.button} text="Test APIs" />
-                 <Button theme={this.props.theme} enabled={this.state.apisWorking} onClick={this.startTipeee} containerClassName={css.button} text="Start Tipeee" />
+                <Button theme={this.props.theme} enabled={!this.state.apisWorking} onClick={() => this.testApis()} className={css.button} text="Test APIs" />
+                <Button theme={this.props.theme} enabled={this.state.apisWorking && !Number.isInteger(this.state.tipeeeEventsReceived)}
+                        onClick={this.startTipeee} className={css.button}
+                        text="Start Tipeee" />
                 {Number.isInteger(this.state.tipeeeEventsReceived) &&
                 <span className={css.tipeeeEvents}>Connected to
                     Tipeee ({this.state.tipeeeEventsAccepted} of {this.state.tipeeeEventsReceived} events accepted)</span>}
+
+                <Interval timeout={this.state.apis.twitchPublic.config.chat_spin_interval_minutes * 1000 * 60} enabled={this.state.apisWorking}
+                          callback={this.autoChatSpin} />
+                <br/>
+                {this.state.autoChatSpins && <div className={css.autoChatSpinText}>Automatic spins for stream viewers: {this.state.autoChatSpins}</div>}
             </div>
         )
     }

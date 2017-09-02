@@ -1,13 +1,12 @@
 import React from "react"
 import PropTypes from "prop-types"
-import classnames from "classnames"
 import Websocket from "react-websocket"
 import Button from "jaid-web/components/Button"
 import css from "./style.css"
 import lodash from "lodash"
-import {Animate, Transition} from "react-move"
-import Appear from "react-move/lib/Appear"
+import {Animate} from "react-move"
 import ReactInterval from "react-interval"
+import theme from "jaid-web/style/theme.css"
 
 const d3 = require("d3-ease")
 
@@ -56,18 +55,21 @@ export default class App extends React.Component {
             message = JSON.parse(message.trim())
         }
 
-        console.log(message);
+        console.log(message)
 
         const truePrizeIndex = lodash.random(40, 80)
 
         const run = {
             name: message.name || "[?]",
             avatar: message.avatar || "http://i.imgur.com/odpSwkX.gif",
+            points: message.points || 0,
+            pointsWon: message.prize.points || 0,
             icon: gioletteIcon,
             prizes: [],
             needleFinish: lodash.random(truePrizeIndex - 0.4, truePrizeIndex + 0.4, true),
             truePrizeIndex: truePrizeIndex,
-            spinDuration: lodash.random(6000, 14000)
+            spinDuration: lodash.random(6000, 14000),
+            reason: message.reason
         }
 
         for (let i = 0; i < truePrizeIndex + 10; i++) {
@@ -83,11 +85,12 @@ export default class App extends React.Component {
     render() {
         return <div>
             {!lodash.isEmpty(this.state.queue) &&
-            <div className={css.queue} style={{backgroundImage: `url(${gioletteIcon})`}}>{lodash.map(this.state.queue, "name").slice(0,3).join(", ")}{(this.state.queue.length > 3) && ` (+${this.state.queue.length-3})`}</div>}
+            <div className={css.queue}
+                 style={{backgroundImage: `url(${gioletteIcon})`}}>{lodash.map(this.state.queue, "name").slice(0, 3).join(", ")}{(this.state.queue.length > 3) && ` (+${this.state.queue.length - 3})`}</div>}
             <div id="debug-panel" className={css.debugPanel}>
                 <textarea defaultValue={defaultMessage} id="message-input" rows="8" cols="50" />
                 <br />
-                <Button onClick={this.onPushMessage} text="Push Message" />
+                <Button theme={theme} onClick={this.onPushMessage} text="Push Message" />
             </div>
             <ReactInterval enabled={true} timeout={1000} callback={this.checkQueue} />
             <Websocket reconnectIntervalInMilliSeconds={2000} url='ws://localhost:24491' onMessage={this.onMessage} />
@@ -110,7 +113,8 @@ class Wheel extends React.Component {
         super(props)
         this.state = {
             phase: "intro",
-            fadingOut: false
+            fadingOut: false,
+            animatedPoints: this.props.run.points
         }
     }
 
@@ -135,6 +139,11 @@ class Wheel extends React.Component {
             this.setState({
                 phase: "hideFakePrizes"
             })
+            if (this.props.run.points && this.props.run.pointsWon) {
+                this.setState({
+                    animatedPoints: this.props.run.points + this.props.run.pointsWon
+                })
+            }
             setTimeout(() => {
                 this.setState({
                     fadingOut: true
@@ -159,7 +168,15 @@ class Wheel extends React.Component {
                         {data => <div style={{fontSize: `${data.size}px`, top: `${-data.size}px`}} className={css.wheelArrow}>▲</div>}
                     </Animate>
                     <img className={css.wheelIcon} src={this.props.run.avatar} />
-                    <div className={css.wheelName}>{this.props.run.name}</div>
+                    <div className={css.wheelName}>{this.props.run.name}
+
+                        {(this.state.phase === "hideFakePrizes" && this.props.run.points && this.props.run.pointsWon) &&
+                        <Animate data={{points: this.state.animatedPoints}} duration={2000} easing="easeCircleOut">
+                            {data => <span className={css.wheelPoints}>{lodash.round(data.points)} PP</span>}
+                        </Animate>}
+
+                    </div>
+                    {this.props.run.reason === "chat_spin" && <span className={css.freeSpin}>Gratisdreh!</span>}
                 </div>
                 }
             </Animate>

@@ -14,7 +14,7 @@ import faviconsConfig from "./config/favicons"
 
 const isDebug = global.DEBUG === true ? true : process.env.NODE_ENV !== "production"
 
-gulp.task("clean", function () {
+gulp.task("clean", () => {
     return gulp.src(["gen/", "dist/", "release/"], {read: false})
         .pipe(gulpClean())
 })

@@ -10,6 +10,16 @@ const twitchRequest = request.defaults({
     }
 })
 
+const tmiRequest = request.defaults({
+    json: true,
+    baseUrl: "http://tmi.twitch.tv/",
+    jar: true,
+    headers: {
+        Accept: "application/vnd.twitchtv.v5+json",
+        "Client-ID": "19hxab1r53jujqh1nt6utpc046axu9"
+    }
+})
+
 export default {
     name: "Twitch Kraken",
     id: "twitch_public",
@@ -52,6 +62,23 @@ export default {
                     : `"${name}"`
                 resolve({avatar: avatar, displayName: displayName})
 
+            })
+        })
+    },
+
+    getChatters() {
+        const channelName = this.config.channel_name
+        return new Promise((resolve, reject) => {
+            tmiRequest(`group/user/${channelName}/chatters`, (error, response, body) => {
+                if (error) {
+                    console.log(`Twitch GET chatters error: ${error}`)
+                    return resolve([])
+                }
+                if (!body || !body.chatters || !body.chatters.moderators) {
+                    console.log(`Twitch GET chatters error: body is ${body}`)
+                    return resolve([])
+                }
+                return resolve(body.chatters.moderators.concat(body.chatters.viewers))
             })
         })
     }

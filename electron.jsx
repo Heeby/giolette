@@ -51,8 +51,10 @@ function createDefaultFile(filename) {
 function createWindow() {
 
     const prizesFile = path.resolve(configDir, "prizes.yml")
+    const chatPrizesFile = path.resolve(configDir, "chat_prizes.yml")
     const configFile = path.resolve(configDir, "config.yml")
     const prizes = yaml.safeLoad(fs.readFileSync(prizesFile)).filter(prize => prize.weight > 0)
+    const chatPrizes = yaml.safeLoad(fs.readFileSync(chatPrizesFile)).filter(prize => prize.weight > 0)
     const config = yaml.safeLoad(fs.readFileSync(configFile))
 
     if (!prizes) {
@@ -70,6 +72,7 @@ function createWindow() {
     }
 
     global.prizes = prizes
+    global.chatPrizes = chatPrizes
     global.initTwitchAuth = initTwitchAuth
     global.apis = {
         deepbot: deepbotApi,
@@ -85,14 +88,18 @@ function createWindow() {
     prizes.forEach(prize => weightSum += prize.weight)
     prizes.forEach(prize => prize.weightNormalized = prize.weight / weightSum)
 
+    weightSum = 0.0
+    chatPrizes.forEach(prize => weightSum += prize.weight)
+    chatPrizes.forEach(prize => prize.weightNormalized = prize.weight / weightSum)
+
     Object.keys(global.apis).forEach((api) => {
         global.apis[api].config = config[api]
     })
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 720,
-        height: 760,
+        width: 815,
+        height: 865,
         minWidth: 500,
         minHeight: 300,
         icon: path.join(__dirname, "dist/firefox_app_128x128.png"),
@@ -204,6 +211,7 @@ app.on("ready", () => {
     fs.mkdirsSync(configDir)
     createDefaultFile("config.yml")
         .then(() => createDefaultFile("prizes.yml"))
+        .then(() => createDefaultFile("chat_prizes.yml"))
         .then(() => createWindow())
 })
 

@@ -3,7 +3,6 @@ import electron from "electron"
 import lodash from "lodash"
 
 import {Link} from "react-router-dom"
-import ReactTooltip from "react-tooltip"
 import css from "./style.css"
 
 export default class PrizesPage extends React.Component {

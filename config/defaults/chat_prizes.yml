@@ -1,0 +1,36 @@
+- name: 100 PP
+  weight: 1000
+  icon: pp_100
+  points: 100
+  hue: 320
+  log_channel: giolette_pp
+
+- name: 200 PP
+  weight: 900
+  icon: pp_200
+  points: 200
+  hue: 320
+  log_channel: giolette_pp
+
+- name: 500 PP
+  weight: 800
+  icon: pp_500
+  points: 500
+  hue: 320
+  log_channel: giolette_pp
+
+- name: 1000 PP
+  weight: 300
+  icon: pp_1000
+  points: 1000
+  hue: 335
+  brightness: 96
+  log_channel: giolette_pp
+
+- name: 5000 PP
+  weight: 80
+  icon: pp_5000
+  points: 5000
+  hue: 335
+  brightness: 96
+  log_channel: giolette_pp

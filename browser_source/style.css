@@ -13,7 +13,7 @@ body {
 .wheelHeader {
     position: absolute;
     width: 390px;
-    top: 350px;
+    top: 365px;
     left: 450px;
     background: rgba(0, 0, 0, 0.7);
     box-shadow: 0 0 5px black;
@@ -31,12 +31,28 @@ body {
     padding-bottom: 20px;
 }
 
+.wheelPoints {
+    color: yellow;
+    margin-left: 15px;
+    font-size: 80%;
+}
+
 .wheelArrow {
     position: absolute;
     top: -130px;
     color: rgba(255, 255, 255, 0.7);
     text-shadow: 0 0 5px black;
     font-size: 130px;
+}
+
+.freeSpin {
+    position: absolute;
+    top: 33px;
+    left: -14px;
+    transform: rotate(-45deg);
+    z-index: 5000;
+    color: yellow;
+    font-size: 22px;
 }
 
 .prize {

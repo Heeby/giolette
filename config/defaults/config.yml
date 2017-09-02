@@ -15,7 +15,9 @@ tipeee:
   api_key: XXX
   username: XXX
 
-twitchPublic: {}
+twitchPublic:
+  channel_name: XXX
+  chat_spin_interval_minutes: 15
 
 websocket:
   port: 24491

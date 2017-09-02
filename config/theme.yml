@@ -20,6 +20,10 @@ content:
 
 button:
   lightness: 80%
+  icon-opacity: 0.85
+
+image-opener:
+  thumbnail-width: 32px
 
 hr:
   opacity: 0.3

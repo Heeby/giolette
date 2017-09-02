@@ -1,6 +1,5 @@
 import path from "path"
 import webpack from "webpack"
-import {BundleAnalyzerPlugin} from "webpack-bundle-analyzer"
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import HtmlWebpackInlineSourcePlugin from "html-webpack-inline-source-plugin"
 
@@ -96,7 +95,18 @@ const config = {
                         loader: "css-loader",
                         options: cssLoaderConfig
                     },
-                    "postcss-loader"
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            sourceMap: "inline",
+                            config: {
+                                path: path.resolve(__dirname, "../config/postcss.config.js"),
+                                ctx: {
+                                    debug: isDebug
+                                }
+                            }
+                        }
+                    }
                 ]
             },
             {

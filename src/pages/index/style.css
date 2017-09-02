@@ -33,7 +33,7 @@
     outline: none;
     border: none;
     box-shadow: 0 0 5px black;
-    margin: 10px;
+    margin-right: 10px;
     font-size: 110%;
     color: gray;
     width: 200px;
@@ -41,6 +41,10 @@
 
 .customSpinButton {
 
+}
+
+.chatSpinButton {
+    margin-bottom: 30px;
 }
 
 .prize {
@@ -57,6 +61,21 @@
     height: 80px;
 }
 
+.customSpinText {
+    color: green;
+    margin-left: 10px;
+}
+
+.customChatSpinText {
+    color: green;
+    margin-left: 10px;
+}
+
 .tipeeeEvents {
     color: green;
+}
+
+.autoChatSpinText {
+    color: green;
+    margin-top: 40px;
 }

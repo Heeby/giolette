@@ -6,7 +6,6 @@ import {Link} from "react-router-dom"
 import ReactTooltip from "react-tooltip"
 import Slider from "rc-slider"
 import css from "./style.css"
-import "!style-loader!css-loader!rc-slider/assets/index.css"
 
 export default class ColorEditorPage extends React.Component {
 

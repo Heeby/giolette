@@ -1,5 +1,6 @@
 module.exports = ({file, options, env}) => {
     const plugins = {
+        "postcss-nested": null,
         "postcss-map": {basePath: "config", maps: ["theme.yml"]},
         "postcss-easings": null,
         "postcss-sprites": false, // Packs images into spritesheets

@@ -21,6 +21,13 @@ export default class App extends React.Component {
         className: PropTypes.string
     }
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            headerLinks: headerLinks
+        }
+    }
+
     updatePage = () => {
         console.log(`Set route to ${window.location.pathname}`)
         return null
@@ -33,15 +40,22 @@ export default class App extends React.Component {
         </div>
     )
 
+    apisTested = () => {
+        this.setState({
+            headerLinks: null
+        })
+    }
+
     render() {
         return (
             <div className={classnames(this.props.className)}>
                 <Router>
-                    <Layout headerLinks={headerLinks} theme={theme} className={css.content} icon={icon} creditsBaseText="Jaid made this one for Giorap90 with" creditLibs={creditLibs}>
-                        {window.location.pathname.includes('index.html') && <Redirect to="/" />}
+                    <Layout headerLinks={this.state.headerLinks} theme={theme} className={css.content} icon={icon}
+                            creditsBaseText="Jaid made this one for Giorap90 with" creditLibs={creditLibs}>
+                        {window.location.pathname.includes("index.html") && <Redirect to="/" />}
                         <Route path="/" component={this.updatePage} />
                         <Switch>
-                            <Route exact path="/" render={() => <IndexPage theme={theme} />} />
+                            <Route exact path="/" render={() => <IndexPage theme={theme} onApisTested={this.apisTested} />} />
                             <Route exact path="/prizes" render={() => <PrizesPage theme={theme} />} />
                             <Route exact path="/chat-prizes" render={() => <ChatPrizesPage theme={theme} />} />
                             <Route exact path="/color-editor" render={() => <ColorEditorPage theme={theme} />} />
