@@ -5,7 +5,7 @@ v1.0.0
 - Einheitliches, violettes Theme
 - Content in 4 Tabs unterteilt (Status, Prizes, Chat Prizes, Color Editor)
 - Color Editor und Chat Prizes implementiert
-- Sicherheitsmaßnahme hinzugefügt, die ein Wechsel des Tabs nach dem Start der APIs verbietet
+- Sicherheitsmaßnahme hinzugefügt, die einen Wechsel des Tabs nach dem Start der APIs verbietet
 - Standardgröße des Fensters angepasst
 - Layout vom Status-Tab hinsichtlich der Übersichtlichkeit verbessert
 - Button für Chat Spin hinzugefügt
@@ -27,3 +27,8 @@ v1.1.0
 - Icon für "Start Tipeee"-Button hinzugefügt
 - Default Theme aus dem BrowserSource entfernt
 - Neue Konfigurationseigenschaft twitchPublic.excludes
+
+v1.2.0
+
+- Namensfilter für Chat Spins gefixt
+- Dependency Upgrade

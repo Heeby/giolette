@@ -78,8 +78,8 @@ export default class IndexPage extends React.Component {
 
     chatSpin = () => {
         this.state.apis.twitchPublic.getChatters().then(chatters => {
-            const filteredChatters = this.state.apis.twitchPublic.excludes
-                ? chatters.filter(chatter => this.state.apis.twitchPublic.excludes.includes(chatter.toLowerCase()))
+            const filteredChatters = this.state.apis.twitchPublic.config.excludes
+                ? chatters.filter(chatter => !this.state.apis.twitchPublic.config.excludes.includes(chatter.toLowerCase()))
                 : chatters
             const pickedUser = lodash.sample(filteredChatters)
             if (!pickedUser) {
