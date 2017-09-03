@@ -6,19 +6,22 @@ import css from "./style.css"
 import lodash from "lodash"
 import {Animate} from "react-move"
 import ReactInterval from "react-interval"
-import theme from "jaid-web/style/theme.css"
 
 const d3 = require("d3-ease")
 
 import defaultMessage from "!raw-loader!./default_message.json"
 import gioletteIcon from "../public/icon_1080.png"
 
+let theme
+if (window.location.hash.substr(1) === "debug") {
+    theme = require("jaid-web/style/theme.css")
+}
+
 export default class App extends React.Component {
 
     componentDidMount() {
         if (window.location.hash.substr(1) === "debug") {
             document.getElementById("debug-panel").style.display = "block"
-            document.body.style.background = "#1c1c1c"
         }
     }
 
@@ -87,11 +90,11 @@ export default class App extends React.Component {
             {!lodash.isEmpty(this.state.queue) &&
             <div className={css.queue}
                  style={{backgroundImage: `url(${gioletteIcon})`}}>{lodash.map(this.state.queue, "name").slice(0, 3).join(", ")}{(this.state.queue.length > 3) && ` (+${this.state.queue.length - 3})`}</div>}
-            <div id="debug-panel" className={css.debugPanel}>
+            {window.location.hash.substr(1) === "debug" && <div id="debug-panel" className={css.debugPanel}>
                 <textarea defaultValue={defaultMessage} id="message-input" rows="8" cols="50" />
                 <br />
                 <Button theme={theme} onClick={this.onPushMessage} text="Push Message" />
-            </div>
+            </div>}
             <ReactInterval enabled={true} timeout={1000} callback={this.checkQueue} />
             <Websocket reconnectIntervalInMilliSeconds={2000} url='ws://localhost:24491' onMessage={this.onMessage} />
             {this.state.currentRun &&

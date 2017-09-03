@@ -24,7 +24,6 @@ export default class IndexPage extends React.Component {
     }
 
     constructor(props) {
-        console.log("constructor")
         super(props)
         this.state = {
             apis: electron.remote.getGlobal("apis"),
@@ -79,7 +78,10 @@ export default class IndexPage extends React.Component {
 
     chatSpin = () => {
         this.state.apis.twitchPublic.getChatters().then(chatters => {
-            const pickedUser = lodash.sample(chatters)
+            const filteredChatters = this.state.apis.twitchPublic.excludes
+                ? chatters.filter(chatter => this.state.apis.twitchPublic.excludes.includes(chatter.toLowerCase()))
+                : chatters
+            const pickedUser = lodash.sample(filteredChatters)
             if (!pickedUser) {
                 console.log(`pickedUser is ${pickedUser}`)
                 return
@@ -217,8 +219,8 @@ export default class IndexPage extends React.Component {
                     {apis}
                 </div>
                 <br />
-                <Button theme={this.props.theme} enabled={!this.state.apisWorking} onClick={() => this.testApis()} className={css.button} text="Test APIs" />
-                <Button theme={this.props.theme} enabled={this.state.apisWorking && !Number.isInteger(this.state.tipeeeEventsReceived)}
+                <Button icon={this.state.apisWorking ? "check" : "cube"} theme={this.props.theme} enabled={!this.state.apisWorking} onClick={() => this.testApis()} className={css.button} text="Test APIs" />
+                <Button icon="bolt" theme={this.props.theme} enabled={this.state.apisWorking && !Number.isInteger(this.state.tipeeeEventsReceived)}
                         onClick={this.startTipeee} className={css.button}
                         text="Start Tipeee" />
                 {Number.isInteger(this.state.tipeeeEventsReceived) &&
@@ -227,7 +229,7 @@ export default class IndexPage extends React.Component {
 
                 <Interval timeout={this.state.apis.twitchPublic.config.chat_spin_interval_minutes * 1000 * 60} enabled={this.state.apisWorking}
                           callback={this.autoChatSpin} />
-                <br/>
+                <br />
                 {this.state.autoChatSpins && <div className={css.autoChatSpinText}>Automatic spins for stream viewers: {this.state.autoChatSpins}</div>}
             </div>
         )

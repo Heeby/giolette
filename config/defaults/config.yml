@@ -16,8 +16,14 @@ tipeee:
   username: XXX
 
 twitchPublic:
-  channel_name: XXX
+  channel_name: giorap90
   chat_spin_interval_minutes: 15
+  excludes:
+    - giorap90
+    - nightbot
+    - hnlbot
+    - overrustlelogs
+    - punchlinebot
 
 websocket:
   port: 24491
