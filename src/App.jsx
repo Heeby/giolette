@@ -10,6 +10,7 @@ import IndexPage from "./pages/index"
 import PrizesPage from "./pages/prizes"
 import ChatPrizesPage from "./pages/chat_prizes"
 import ColorEditorPage from "./pages/color_editor"
+import ChangelogPage from "./pages/changelog/index"
 
 import creditLibs from "../config/libs.yml"
 import headerLinks from "../config/header_links.yml"
@@ -59,6 +60,7 @@ export default class App extends React.Component {
                             <Route exact path="/prizes" render={() => <PrizesPage theme={theme} />} />
                             <Route exact path="/chat-prizes" render={() => <ChatPrizesPage theme={theme} />} />
                             <Route exact path="/color-editor" render={() => <ColorEditorPage theme={theme} />} />
+                            <Route exact path="/changelog" render={() => <ChangelogPage theme={theme} />} />
                             <Route component={this.NotFound} />
                         </Switch>
                     </Layout>

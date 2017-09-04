@@ -132,6 +132,10 @@ const config = {
             {
                 test: /\.(wav|mp3|ttf)$/,
                 use: "file-loader"
+            },
+            {
+                test: /\.md/,
+                use: ["html-loader", "markdown-loader"]
             }
         ]
     }

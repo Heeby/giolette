@@ -58,6 +58,7 @@ export default class App extends React.Component {
             message = JSON.parse(message.trim())
         }
 
+        console.log("- Spin -")
         console.log(message)
 
         const truePrizeIndex = lodash.random(40, 80)
@@ -114,10 +115,11 @@ class Wheel extends React.Component {
 
     constructor(props) {
         super(props)
+        console.log(this.props.run)
         this.state = {
             phase: "intro",
             fadingOut: false,
-            animatedPoints: this.props.run.points
+            animatedPoints: this.props.run.points - this.props.run.pointsWon
         }
     }
 
@@ -144,7 +146,7 @@ class Wheel extends React.Component {
             })
             if (this.props.run.points && this.props.run.pointsWon) {
                 this.setState({
-                    animatedPoints: this.props.run.points + this.props.run.pointsWon
+                    animatedPoints: this.props.run.points
                 })
             }
             setTimeout(() => {
@@ -173,7 +175,7 @@ class Wheel extends React.Component {
                     <img className={css.wheelIcon} src={this.props.run.avatar} />
                     <div className={css.wheelName}>{this.props.run.name}
 
-                        {(this.state.phase === "hideFakePrizes" && this.props.run.points && this.props.run.pointsWon) &&
+                        {(this.state.phase === "hideFakePrizes" && this.props.run.points > 0 && this.props.run.pointsWon > 0) &&
                         <Animate data={{points: this.state.animatedPoints}} duration={2000} easing="easeCircleOut">
                             {data => <span className={css.wheelPoints}>{lodash.round(data.points)} PP</span>}
                         </Animate>}

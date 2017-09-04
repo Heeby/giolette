@@ -1,0 +1,24 @@
+h4 {
+    color: #1a1a1a;
+    font-weight: bold;
+    background: #452eb8;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+ul {
+    list-style: initial;
+    margin-bottom: 30px;
+}
+
+ul li {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+code {
+    font-family: monospace;
+    background-color: #3721a9;
+    border-radius: 3px;
+    padding: 4px;}
