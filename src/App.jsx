@@ -4,6 +4,7 @@ import classnames from "classnames"
 import Layout from "jaid-web/components/Layout"
 import css from "./style.css"
 import theme from "jaid-web/style/theme.css"
+import electron from "electron"
 
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom"
 import IndexPage from "./pages/index"
@@ -15,6 +16,8 @@ import ChangelogPage from "./pages/changelog/index"
 import creditLibs from "../config/libs.yml"
 import headerLinks from "../config/header_links.yml"
 import icon from "../dist/favicon.ico"
+
+const winston = electron.remote.getGlobal("winston")
 
 export default class App extends React.Component {
 
@@ -30,7 +33,7 @@ export default class App extends React.Component {
     }
 
     updatePage = () => {
-        console.log(`Set route to ${window.location.pathname}`)
+        winston.debug(`Set route to ${window.location.pathname}`)
         return null
     }
 

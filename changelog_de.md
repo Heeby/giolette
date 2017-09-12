@@ -38,3 +38,10 @@
 - Punkte-Animation wird jetzt richtig versteckt bei Nicht-Punkte-Gewinnen
 - Startzahl und Endzahl der Punkte-Animation im BrowserSource nach unten korrigiert
 - Changelog-Tab hinzugefügt
+
+#### v1.4.0 (12.09.2017)
+
+- Dependency Upgrade
+- Logging verbessert und neue Log Messages hinzugefügt
+- Logging Engine integriert, die in `stdout` und `giolette-config/log.txt` schreibt
+- Reste der unbenutzen Twitch OAuth Routine entfernt

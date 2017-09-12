@@ -1,12 +1,15 @@
 import http from "http"
 import request from "request"
 
+let winston
+
 export default {
     name: "OBS BrowserSource",
     id: "browser_source",
     status: "pending",
     tooltip: null,
     config: null,
+    setWinston: winstonInstance => winston = winstonInstance,
 
     htmlContent: null,
     httpServer: null,
@@ -16,7 +19,7 @@ export default {
         return new Promise((resolve, reject) => {
 
             if (this.httpServer) {
-                console.log("Skipping BrowserSource.init(): httpServer already initialized")
+                winston.debug("Skipping BrowserSource.init(): httpServer already initialized")
                 resolve()
                 return
             }

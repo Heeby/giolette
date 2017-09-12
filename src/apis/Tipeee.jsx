@@ -1,11 +1,15 @@
 import io from "socket.io-client"
 
+let winston
+
 export default {
     name: "TipeeeStream",
     id: "tipeee",
     status: "pending",
     tooltip: null,
     config: null,
+    setWinston: winstonInstance => winston = winstonInstance,
+
     socket: null,
 
     init() {
@@ -17,9 +21,15 @@ export default {
 
             const socket = io("https://sso.tipeeestream.com:4242")
             socket.on("connect", () => {
-                console.log("Connected to Tipeee socket")
+                winston.info("Connected to Tipeee socket")
                 this.socket = socket
                 resolve("Seems to work")
+            })
+            socket.on("reconnect", attempt => {
+                winston.info(`Tipeee socket client reconnected after ${attempt} attempts`)
+            })
+            socket.on("reconnect_error", error => {
+                winston.warn("Tipeee socket client reconnection failed", error)
             })
             socket.emit("join-room", {room: this.config.api_key, username: this.config.username})
         })

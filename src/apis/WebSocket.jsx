@@ -1,10 +1,13 @@
 import WebSocket from "ws"
 
+let winston
+
 export default {
     name: "WebSocket",
     id: "websocket",
     status: "pending",
     tooltip: null,
+    setWinston: winstonInstance => winston = winstonInstance,
 
     websocketServer: null,
 

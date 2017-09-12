@@ -13,6 +13,8 @@ import css from "./style.css"
 
 import browserSourceHtml from "raw-loader!./../../../gen/browser-source/index.html"
 
+const winston = electron.remote.getGlobal("winston")
+
 export default class IndexPage extends React.Component {
 
     static propTypes = {
@@ -39,6 +41,7 @@ export default class IndexPage extends React.Component {
     }
 
     testApis = (apis) => {
+        winston.info("Testing APIs...")
         this.setState({apisWorking: true})
         this.props.onApisTested()
         apis = Array.isArray(apis) ? apis : Object.values(this.state.apis)
@@ -54,6 +57,7 @@ export default class IndexPage extends React.Component {
                     this.forceUpdate(null)
                 })
                 .catch((reason) => {
+                    winston.error(`Error on testing ${api.name}: ${reason.message}`)
                     api.status = "error"
                     api.tooltip = reason.message
                     this.setState({apisWorking: false})
@@ -83,10 +87,10 @@ export default class IndexPage extends React.Component {
                 : chatters
             const pickedUser = lodash.sample(filteredChatters)
             if (!pickedUser) {
-                console.log(`pickedUser is ${pickedUser}`)
+                winston.info(`pickedUser is ${pickedUser}`)
                 return
             }
-            console.log(`Chat spin: ${pickedUser}`)
+            winston.info(`Chat spin: ${pickedUser}`)
             this.spin(pickedUser, "chat_spin", electron.remote.getGlobal("chatPrizes"))
         })
     }
@@ -108,6 +112,8 @@ export default class IndexPage extends React.Component {
             this.state.apis.deepbot.addPoints(user, selectedPrize.points)
         }
 
+        winston.info("Spin initiated", {user: user, reason: reason, prize: selectedPrize})
+
         Promise.all([this.state.apis.twitchPublic.getAvatar(user), this.state.apis.deepbot.getPoints(user)]).then((data) => {
             const spin = {
                 name: data[0].displayName,
@@ -125,13 +131,15 @@ export default class IndexPage extends React.Component {
     startTipeee = () => {
         this.state.apis.tipeee.addListener(data => {
 
+            winston.debug("Received Tipeee event", data)
+
             if (!data.event.parameters.username) {
-                console.log(`Skipping user with broken name ${data.event.parameters.username}`)
+                winston.warn(`Skipping user with broken name ${data.event.parameters.username}`)
                 return
             }
 
             if (data.event.type !== "subscription" && data.event.type !== "donation") {
-                console.log(`I don't need the event type ${data.event.type}! Skipping.`)
+                winston.info(`I don't need the event type ${data.event.type}! Skipping.`)
                 return
             }
 
@@ -141,16 +149,16 @@ export default class IndexPage extends React.Component {
             if (data.event.type === "donation") {
 
                 if (data.event.parameters.currency !== "EUR") {
-                    console.log(`Ignoring currency ${data.event.parameters.currency}`)
+                    winston.info(`Ignoring currency ${data.event.parameters.currency}`)
                     return
                 }
 
-                console.log(`${data.event.parameters.username}: ${data.event.parameters.amount} ${data.event.parameters.currency}`)
+                winston.info(`${data.event.parameters.username}: ${data.event.parameters.amount} ${data.event.parameters.currency}`)
                 spins = lodash.floor(data.event.parameters.amount / 5)
 
             } else {
 
-                console.log(`${data.event.parameters.username}: Subscription plan ${data.event.parameters.plan} (${+data.event.parameters.resub + 1} months)`)
+                winston.info(`${data.event.parameters.username}: Subscription plan ${data.event.parameters.plan} (${+data.event.parameters.resub + 1} months)`)
 
                 if (data.event.parameters.plan === "3000") {
                     spins = 8
@@ -163,11 +171,11 @@ export default class IndexPage extends React.Component {
             }
 
             if (spins < 1) {
-                console.log(`${data.event.parameters.username}: spins is ${spins}, skipping`)
+                winston.info(`${data.event.parameters.username}: spins is ${spins}, skipping`)
                 return
             }
 
-            console.log(`${data.event.parameters.username} gets ${spins} spins from Tipeee ${data.event.type} event`)
+            winston.info(`${data.event.parameters.username} gets ${spins} spins from Tipeee ${data.event.type} event`)
 
             for (let i = 0; i < spins; i++) {
                 setTimeout(() => this.spin(data.event.parameters.username, "tipeee"), (i + 3) * 1000)
@@ -178,6 +186,7 @@ export default class IndexPage extends React.Component {
         })
         this.setState({tipeeeEventsReceived: 0})
         this.setState({tipeeeEventsAccepted: 0})
+        winston.info("Started listening to Tipeee events")
     }
 
     render() {
@@ -219,7 +228,8 @@ export default class IndexPage extends React.Component {
                     {apis}
                 </div>
                 <br />
-                <Button icon={this.state.apisWorking ? "check" : "cube"} theme={this.props.theme} enabled={!this.state.apisWorking} onClick={() => this.testApis()} className={css.button} text="Test APIs" />
+                <Button icon={this.state.apisWorking ? "check" : "cube"} theme={this.props.theme} enabled={!this.state.apisWorking}
+                        onClick={() => this.testApis()} className={css.button} text="Test APIs" />
                 <Button icon="bolt" theme={this.props.theme} enabled={this.state.apisWorking && !Number.isInteger(this.state.tipeeeEventsReceived)}
                         onClick={this.startTipeee} className={css.button}
                         text="Start Tipeee" />

@@ -3,6 +3,8 @@ import numeral from "numeral"
 import EventEmitter from "eventemitter3"
 import lodash from "lodash"
 
+let winston
+
 const eventEmitter = new EventEmitter()
 const onDeepbotMessage = (message) => {
     eventEmitter.emit("message", message)
@@ -14,6 +16,7 @@ export default {
     status: "pending",
     tooltip: null,
     config: null,
+    setWinston: winstonInstance => winston = winstonInstance,
 
     socket: null,
 
@@ -26,7 +29,7 @@ export default {
 
             const socket = new WebSocket(`ws://localhost:${this.config.port}`)
             socket.on("open", () => {
-                console.log("Deepbot WebSocket started")
+                winston.info("Deepbot WebSocket started")
                 this.socket = socket
                 socket.on("message", onDeepbotMessage)
                 eventEmitter.on("message", (message) => {
@@ -58,16 +61,16 @@ export default {
                 message = message.trim()
 
                 if (!lodash.startsWith(message, "{") && !lodash.startsWith(message, "[")) {
-                    console.log(`Ignoring non-JSON message from DeepBot: ${message}`)
+                   winston.debug(`Ignoring non-JSON message from DeepBot: ${message}`)
                     return
                 }
 
                 const result = JSON.parse(message)
                 if (!result || !result.function || result.function !== "get_points" || !result.param || result.param.toLowerCase() !== name.toLowerCase()) {
-                    console.log(`Ignoring wrong message from DeepBot: ${JSON.stringify(result)}`)
+                    winston.debug(`Ignoring wrong message from DeepBot: ${JSON.stringify(result)}`)
                     return
                 }
-                console.log(`${name}: ${numeral(result.msg.replace(",", ".")).value()}`)
+                winston.info(`Got points feedback from DeepBot: [${name}: ${numeral(result.msg.replace(",", ".")).value()}]`)
                 eventEmitter.removeListener("message", messageListener)
                 resolve(numeral(result.msg.replace(",", ".")).value())
             }
@@ -81,7 +84,7 @@ export default {
 
     addPoints(name, points) {
         return this.init().then(() => new Promise((resolve, reject) => {
-            console.log(`${name}: +${points}`)
+            winston.info(`${name}: +${points} points on DeepBot`)
             this.socket.send(`api|add_points|${name}|${points}`)
             resolve()
         }))

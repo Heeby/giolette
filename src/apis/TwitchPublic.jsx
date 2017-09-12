@@ -1,5 +1,7 @@
 import request from "request"
 
+let winston
+
 const twitchRequest = request.defaults({
     json: true,
     baseUrl: "https://api.twitch.tv/kraken/",
@@ -26,6 +28,7 @@ export default {
     status: "pending",
     tooltip: null,
     config: null,
+    setWinston: winstonInstance => winston = winstonInstance,
 
     init() {
 
@@ -71,11 +74,11 @@ export default {
         return new Promise((resolve, reject) => {
             tmiRequest(`group/user/${channelName}/chatters`, (error, response, body) => {
                 if (error) {
-                    console.log(`Twitch GET chatters error: ${error}`)
+                    winston.error(`Twitch GET chatters error: ${error}`)
                     return resolve([])
                 }
                 if (!body || !body.chatters || !body.chatters.moderators) {
-                    console.log(`Twitch GET chatters error: body is ${body}`)
+                    winston.error(`Twitch GET chatters error: body is ${body}`)
                     return resolve([])
                 }
                 return resolve(body.chatters.moderators.concat(body.chatters.viewers))

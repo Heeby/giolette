@@ -1,4 +1,6 @@
-import {Client as DiscordClient, RichEmbed} from "discord.js"
+import {Client as DiscordClient} from "discord.js"
+
+let winston
 
 export default {
     name: "Discord",
@@ -6,6 +8,7 @@ export default {
     status: "pending",
     tooltip: null,
     config: null,
+    setWinston: winstonInstance => winston = winstonInstance,
 
     // Set in init()
     discordBot: null,
@@ -22,18 +25,17 @@ export default {
             const discordBot = new DiscordClient()
 
             discordBot.on("ready", () => {
-                console.log("Discord bot is ready!")
+                winston.info("Discord bot is ready!")
                 this.discordBot = discordBot
                 this.server = this.discordBot.guilds.find("id", this.config.server_id)
                 resolve("Ready!")
             })
             discordBot.on("warn", (msg) => {
-                console.log(`Discord bot warning: ${msg}`)
+                winston.warn(`Discord bot warning: ${msg}`)
             })
 
             discordBot.login(this.config.bot_key)
-            console.log("Logging in as Discord bot...")
-            console.log(this.config.bot_key)
+            winston.info("Logging in as Discord bot...", {key: this.config.bot_key})
 
             setTimeout(() => {
                 reject(new Error("Connecting timed out after 8 seconds"))
@@ -50,7 +52,7 @@ export default {
                 return
             }
 
-            console.log(`servers: ${discordBot.guilds.keyArray()}`)
+            winston.info(`Discord bot is on these servers: ${discordBot.guilds.keyArray()}`)
             if (!server) {
                 reject(`Giolette is not a member of Discord server with ID ${discordBot.guilds.serverId}`)
                 return
@@ -111,7 +113,7 @@ export default {
 
     setStatus(status) {
         if (!this.discordBot) {
-            console.log(`Called setStatus(), but discordBot is ${this.discordBot}`)
+            winston.warn(`Called setStatus(), but discordBot is ${this.discordBot}`)
         }
 
         this.discordBot.user.setGame(status)

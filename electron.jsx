@@ -6,25 +6,38 @@ import installExtension, {REACT_DEVELOPER_TOOLS} from "electron-devtools-install
 import fs from "fs-extra"
 import path from "path"
 import url from "url"
-import queryString from "query-string"
 import yaml from "js-yaml"
 
 import deepbotApi from "./src/apis/Deepbot"
 import discordApi from "./src/apis/Discord"
 import tipeeeApi from "./src/apis/Tipeee"
-import twitchOauthApi from "./src/apis/TwitchOauth"
 import twitchPublicApi from "./src/apis/TwitchPublic"
 import browserSourceApi from "./src/apis/BrowserSource"
 import websocketApi from "./src/apis/WebSocket"
+import winston from "winston"
+import moment from "moment"
+import lodash from "lodash"
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-let authWindow
 let tray
 
 const configDir = path.resolve(".", "giolette-config")
-console.log(`Working in: ${configDir}`)
+
+winston.configure({
+    level: "debug",
+    transports: [
+        new (winston.transports.Console)(),
+        new (winston.transports.File)({
+            filename: path.resolve(configDir, "log.txt"),
+            json: false,
+            formatter: options => `[${moment().format("DD.MM.YYYY hh:mm:ss")} ${lodash.padStart(options.level.toUpperCase(), 7)}] ${options.message || ""}${options.meta && Object.keys(options.meta).length ? " " + JSON.stringify(options.meta) : ""}`
+        })
+    ]
+})
+
+winston.info(`Working in: ${configDir}`)
 
 function createDefaultFile(filename) {
     return new Promise((resolve, reject) => {
@@ -32,13 +45,13 @@ function createDefaultFile(filename) {
         const outputFile = path.resolve(configDir, filename)
 
         if (fs.existsSync(outputFile)) {
-            console.log(`File ${filename} found!`)
+            winston.info(`File ${filename} found!`)
             resolve()
             return
         }
 
         const defaultFile = path.resolve(`config/defaults/${filename}`)
-        console.log(`${defaultFile} -> ${outputFile}`)
+        winston.info(`${defaultFile} -> ${outputFile}`)
         fs.copy(path.resolve(__dirname, `config/defaults/${filename}`), outputFile, {
             overwrite: true,
             dereference: true
@@ -67,18 +80,17 @@ function createWindow() {
 
     if (isDebug) {
         installExtension(REACT_DEVELOPER_TOOLS)
-            .then((name) => console.log(`Added Extension:  ${name}`))
-            .catch((err) => console.log("An error occurred: ", err))
+            .then((name) => winston.info(`Added Extension:  ${name}`))
+            .catch((err) => winston.error("An error occurred: ", err))
     }
 
+    global.winston = winston
     global.prizes = prizes
     global.chatPrizes = chatPrizes
-    global.initTwitchAuth = initTwitchAuth
     global.apis = {
         deepbot: deepbotApi,
         discord: discordApi,
         tipeee: tipeeeApi,
-        //    twitchOauth: twitchOauthApi,
         twitchPublic: twitchPublicApi,
         browserSource: browserSourceApi,
         websocket: websocketApi
@@ -94,6 +106,7 @@ function createWindow() {
 
     Object.keys(global.apis).forEach((api) => {
         global.apis[api].config = config[api]
+        global.apis[api].setWinston(winston)
     })
 
     // Create the browser window.
@@ -124,11 +137,13 @@ function createWindow() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null
+        winston.info("Closed")
     })
 
     mainWindow.on("minimize", event => {
         event.preventDefault()
         mainWindow.hide()
+        winston.debug("Minized to tray");
     })
 
     tray = new Tray(path.join(__dirname, "dist/favicon-32x32.png"))
@@ -143,65 +158,14 @@ function createWindow() {
     ])
     tray.setToolTip("gioGoennung")
     tray.setContextMenu(contextMenu)
-    tray.on("click", event => {
+    tray.on("click", () => {
         mainWindow.show()
-    })
-}
-
-const initTwitchAuth = () => {
-    authWindow = new BrowserWindow({
-        parent: mainWindow,
-        width: 480,
-        height: 480,
-        minWidth: 480,
-        minHeight: 480,
-        icon: path.join(__dirname, "dist/firefox_app_128x128.png"),
-        darkTheme: true,
-        autoHideMenuBar: true,
-        nodeIntegration: false,
-        title: "Login with Twitch",
-        webPreferences: {
-            defaultEncoding: "UTF-8"
-        }
+        winston.debug("Opened from tray");
     })
 
-    authWindow.loadURL(url.format({
-        protocol: "https",
-        host: "api.twitch.tv",
-        pathname: "/kraken/oauth2/authorize",
-        query: {
-            client_id: "19hxab1r53jujqh1nt6utpc046axu9",
-            redirect_uri: "http://localhost",
-            response_type: "token id_token",
-            scope: "openid channel_read channel_subscriptions"
-        }
-    }))
-
-    authWindow.webContents.on("will-navigate", function (event, url) {
-        getTwitchAuth(url)
-    })
-
-    authWindow.webContents.on("did-get-redirect-request", function (event, oldUrl, newUrl) {
-        getTwitchAuth(newUrl)
-    })
-}
-
-function getTwitchAuth(redirectUrl) {
-    const {host, hash} = url.parse(redirectUrl)
-
-    if (host !== "localhost") {
-        return
-    }
-
-    const {access_token, id_token} = queryString.parse(hash)
-
-    if (access_token) {
-        apis.twitchOauth.accessToken = access_token
-        apis.twitchOauth.idToken = id_token
-        console.log(`access_token: ${access_token}`)
-        console.log(`id_token: ${id_token}`)
-        authWindow.destroy()
-    }
+    winston.debug("Config", config)
+    winston.debug(`${prizes.length} prizes: ${prizes.map(prize => prize.name).join(", ")}`)
+    winston.debug(`${chatPrizes.length} chat Prizes: ${chatPrizes.map(prize => prize.name).join(", ")}`)
 }
 
 // This method will be called when Electron has finished
