@@ -45,3 +45,9 @@
 - Logging verbessert und neue Log Messages hinzugefügt
 - Logging Engine integriert, die in `stdout` und `giolette-config/log.txt` schreibt
 - Reste der unbenutzen Twitch OAuth Routine entfernt
+
+#### v1.5.0 (22.09.2017)
+
+- Dependency Upgrade (electron 1.7.6, electron-builder 19.29.1, electron-prebuilt-compile 1.7.6, postcss-import 11.0.0, webpack-dev-server 2.8.2, yarn 1.0.2, request 2.82.0, ws 3.2.0)
+- Methode integriert, die sich nach Verbindungsabbruch zu Tipeee selbstständig neu bei sso.tipeeestream.com einloggt
+- Notification hinzugefügt, die erscheint, wenn eine neue Verbindung zu Tipeee hergestellt wird

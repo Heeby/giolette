@@ -8,6 +8,7 @@ export default {
     status: "pending",
     tooltip: null,
     config: null,
+    reconnectListener: null,
     setWinston: winstonInstance => winston = winstonInstance,
 
     socket: null,
@@ -25,8 +26,10 @@ export default {
                 this.socket = socket
                 resolve("Seems to work")
             })
-            socket.on("reconnect", attempt => {
-                winston.info(`Tipeee socket client reconnected after ${attempt} attempts`)
+            socket.on("reconnect", attempts => {
+                winston.info(`Tipeee socket client reconnected after ${attempts} attempts`)
+                socket.emit("join-room", {room: this.config.api_key, username: this.config.username})
+                this.reconnectListener(attempts)
             })
             socket.on("reconnect_error", error => {
                 winston.warn("Tipeee socket client reconnection failed", error)
@@ -42,5 +45,9 @@ export default {
     addListener(listener) {
         return this.init()
             .then(() => this.socket.on("new-event", listener))
+    },
+
+    setReconnectListener(listener) {
+        this.reconnectListener = listener
     }
 }

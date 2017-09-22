@@ -129,6 +129,16 @@ export default class IndexPage extends React.Component {
     }
 
     startTipeee = () => {
+        this.setState({tipeeeEventsReceived: 0})
+        this.setState({tipeeeEventsAccepted: 0})
+        this.state.apis.tipeee.setReconnectListener(attempts => {
+            new Notification("Connection to Tipeee Socket has been restored.")
+        })
+        this.startTipeeeListener()
+        winston.info("Initially started Tipeee")
+    }
+
+    startTipeeeListener = () => {
         this.state.apis.tipeee.addListener(data => {
 
             winston.debug("Received Tipeee event", data)
@@ -184,9 +194,7 @@ export default class IndexPage extends React.Component {
             this.setState({tipeeeEventsAccepted: this.state.tipeeeEventsAccepted + 1})
 
         })
-        this.setState({tipeeeEventsReceived: 0})
-        this.setState({tipeeeEventsAccepted: 0})
-        winston.info("Started listening to Tipeee events")
+        winston.info("Listening to Tipeee events")
     }
 
     render() {
